@@ -1,0 +1,48 @@
+
+depend: [ProtocolLib, WorldEdit, PlaceholderAPI]
+softdepend: [Multiverse-Core]
+authors: [DomiRusz24]
+
+commands:
+  arena:
+    usage: /arena <arena>
+  arenaconfig:
+    usage: /arenaconfig <arena>
+    aliases: [arenac]
+  probending:
+    usage: /pb
+    aliases: [pb,probend]
+  leave:
+    usage: /leave
+    aliases: [quit]
+  pblevel:
+    usage: /pblevel
+    aliases: [pblvl,pbl,level]
+  forcestart:
+    usage: /fs
+    aliases: [fs]
+  team:
+    usage: /team
+
+
+permissions:
+  probending:
+    command:
+      arena:
+        default: op
+      arenaconfig:
+        default: op
+      probending:
+        default: op
+      leave:
+        default: op
+      pblevel:
+        default: op
+      forcestart:
+        default: op
+      team:
+        default: op
+
+
+
+

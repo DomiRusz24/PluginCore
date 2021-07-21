@@ -1,0 +1,94 @@
+package me.domirusz24.plugincore.command.abstractclasses;
+
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static me.domirusz24.plugincore.command.Languages.*;
+
+public abstract class Command {
+
+    protected abstract String name();
+    protected abstract String usage();
+    protected abstract String description();
+    protected List<String> aliases() {
+        return new ArrayList<>();
+    }
+
+    public String getName() {
+        return this.name();
+    }
+
+    public String getUsage() {
+        return this.usage();
+    }
+
+    public String getDescription() {
+        return this.description();
+    }
+
+    public List<String> getAliases() {
+        return this.aliases();
+    }
+
+    public void help(CommandSender sender, boolean description) {
+        sender.sendMessage(USAGE + getUsage());
+        if (description) {
+            sender.sendMessage(COMMAND_DESCRIPTION + description());
+        }
+    }
+
+    protected String getPermission() {
+        String permission = "PluginCore.command." + this.name();
+        return permission;
+    }
+
+    protected boolean hasPermission(CommandSender sender) {
+        if (sender.hasPermission(getPermission())) {
+            return true;
+        } else {
+            sender.sendMessage(INSUFFICIENT_PERMS);
+            return false;
+        }
+    }
+
+    protected boolean hasPermission(CommandSender sender, String extra) {
+        String permission = getPermission() + "." + extra;
+        if (sender.hasPermission(permission)) {
+            return true;
+        } else {
+            sender.sendMessage(INSUFFICIENT_PERMS);
+            return false;
+        }
+    }
+
+    protected boolean correctLength(CommandSender sender, int size, int min, int max) {
+        if (size >= min && size <= max) {
+            return true;
+        } else {
+            this.help(sender, false);
+            return false;
+        }
+    }
+
+    protected boolean isPlayer(CommandSender sender) {
+        if (sender instanceof Player) {
+            return true;
+        } else {
+            sender.sendMessage(MUST_BE_PLAYER);
+            return false;
+        }
+    }
+
+    protected Integer getNumber(String string) {
+        Integer value;
+        try {
+            value = Integer.parseInt(string);
+        } catch (NumberFormatException e) {
+            value = null;
+        }
+        return value;
+    }
+}
