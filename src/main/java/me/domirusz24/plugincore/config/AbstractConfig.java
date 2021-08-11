@@ -212,7 +212,11 @@ public abstract class AbstractConfig extends YamlConfiguration {
     public static World getWorld(String name) {
         World world = Bukkit.getWorld(name);
         if (world == null && PluginCore.multiverse != null) {
-            world = PluginCore.multiverse.getMVWorldManager().getMVWorld(name).getCBWorld();
+            try {
+                world = PluginCore.multiverse.getMVWorldManager().getMVWorld(name).getCBWorld();
+            } catch (NullPointerException e) {
+                return null;
+            }
         }
         return world;
     }

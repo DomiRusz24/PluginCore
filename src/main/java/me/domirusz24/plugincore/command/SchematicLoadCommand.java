@@ -2,6 +2,7 @@ package me.domirusz24.plugincore.command;
 
 import me.domirusz24.plugincore.command.abstractclasses.BaseSubCommand;
 import org.bukkit.command.CommandSender;
+import org.bukkit.permissions.PermissionDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,5 +31,10 @@ public class SchematicLoadCommand extends BaseSubCommand {
     @Override
     protected String description() {
         return "Load a schematic.";
+    }
+
+    @Override
+    public PermissionDefault getPermissionDefault() {
+        return null;
     }
 }

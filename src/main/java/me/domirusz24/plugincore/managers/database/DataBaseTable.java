@@ -265,8 +265,12 @@ public abstract class DataBaseTable {
     public void putDefault(String index, Runnable runnable) {
         manager.sqlQueue.add(() -> {
             try {
-
-                StringBuilder pathString = new StringBuilder("INSERT or IGNORE INTO `" + manager.getTablePrefix() + getName() + "` (`" + this.index + "`");
+                StringBuilder pathString;
+                if (manager.isSqlLite()) {
+                    pathString = new StringBuilder("INSERT or IGNORE INTO `" + manager.getTablePrefix() + getName() + "` (`" + this.index + "`");
+                } else {
+                    pathString = new StringBuilder("INSERT IGNORE INTO `" + manager.getTablePrefix() + getName() + "` (`" + this.index + "`");
+                }
                 StringBuilder valuesString = new StringBuilder(") VALUES('" + index + "'");
                 for (DataBaseValue<?> value : values) {
                     pathString.append(", `").append(value.getName()).append("`");
@@ -286,7 +290,7 @@ public abstract class DataBaseTable {
         });
     }
 
-    public String listToString(List<String> list) {
+    public static String listToString(List<String> list) {
         StringBuilder sb = new StringBuilder();
         for (String s : list) {
             sb.append(s).append(';');
@@ -295,7 +299,16 @@ public abstract class DataBaseTable {
         return sb.toString();
     }
 
-    public ArrayList<String> stringToList(String string) {
+    public static String listToString(String[] list) {
+        StringBuilder sb = new StringBuilder();
+        for (String s : list) {
+            sb.append(s).append(';');
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        return sb.toString();
+    }
+
+    public static ArrayList<String> stringToList(String string) {
         ArrayList<String> s = new ArrayList<>();
         Collections.addAll(s, string.split(";"));
         return s;

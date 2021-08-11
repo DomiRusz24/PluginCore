@@ -13,7 +13,7 @@ public abstract class AbstractSubCommand extends Command {
     }
 
     @Override
-    protected String getPermission() {
+    public String getPermission() {
         return originalCommand.getPermission() + "." + getName();
     }
 

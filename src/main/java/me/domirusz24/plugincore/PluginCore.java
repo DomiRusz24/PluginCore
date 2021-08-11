@@ -3,15 +3,18 @@ package me.domirusz24.plugincore;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.onarandombox.MultiverseCore.MultiverseCore;
+import me.domirusz24.plugincore.core.players.PlayerData;
 import me.domirusz24.plugincore.managers.*;
 import me.domirusz24.plugincore.managers.database.DataBaseManager;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import me.domirusz24.plugincore.managers.database.DataBaseTable;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.UUID;
 import java.util.logging.Level;
 
 public abstract class PluginCore extends JavaPlugin {
@@ -37,6 +40,9 @@ softdepend: [Multiverse-Core]
     public static GUIManager guiM;
     public static RegionManager regionM;
     public static WorldEditManager worldEditM;
+    public static ChatGUIManager chatGuiM;
+    public static ScoreboardManager boardM;
+    public static PlayerDataManager playerDataM = null;
 
     @Override
     public void onEnable() {
@@ -118,7 +124,13 @@ softdepend: [Multiverse-Core]
 
         guiM = new GUIManager(plugin);
 
+        chatGuiM = new ChatGUIManager(plugin);
+
         worldEditM = new WorldEditManager(plugin, worldEdit);
+
+        playerDataM = new PlayerDataManager(plugin);
+
+        boardM = new ScoreboardManager(plugin);
 
         _loadManagers();
         _loadCommands();
@@ -162,6 +174,8 @@ softdepend: [Multiverse-Core]
     }
 
     protected abstract void _shutOffPlugin();
+
+    public abstract PlayerData registerPlayer(String name, UUID uuid);
 
     // Config stuff
     @Override

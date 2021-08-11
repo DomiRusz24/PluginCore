@@ -47,20 +47,6 @@ public abstract class AbstractPlayer {
         return player;
     }
 
-    @Override
-    public int hashCode() {
-        return player.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) return false;
-        if (obj instanceof AbstractPlayer) {
-            return player.equals(((AbstractPlayer) obj).getPlayer());
-        }
-        return player.equals(obj);
-    }
-
     public abstract boolean resetInventory();
 
     protected BossBar bossBar() {

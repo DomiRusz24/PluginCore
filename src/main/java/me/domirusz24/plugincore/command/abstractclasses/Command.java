@@ -1,7 +1,9 @@
 package me.domirusz24.plugincore.command.abstractclasses;
 
+import me.domirusz24.plugincore.PluginCore;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +35,10 @@ public abstract class Command {
         return this.aliases();
     }
 
+    public boolean hideCommand() {
+        return false;
+    }
+
     public void help(CommandSender sender, boolean description) {
         sender.sendMessage(USAGE + getUsage());
         if (description) {
@@ -40,12 +46,14 @@ public abstract class Command {
         }
     }
 
-    protected String getPermission() {
-        String permission = "PluginCore.command." + this.name();
+    public abstract PermissionDefault getPermissionDefault();
+
+    public String getPermission() {
+        String permission = PluginCore.plugin.getName() + ".command." + this.name();
         return permission;
     }
 
-    protected boolean hasPermission(CommandSender sender) {
+    public boolean hasPermission(CommandSender sender) {
         if (sender.hasPermission(getPermission())) {
             return true;
         } else {
@@ -54,7 +62,7 @@ public abstract class Command {
         }
     }
 
-    protected boolean hasPermission(CommandSender sender, String extra) {
+    public boolean hasPermission(CommandSender sender, String extra) {
         String permission = getPermission() + "." + extra;
         if (sender.hasPermission(permission)) {
             return true;

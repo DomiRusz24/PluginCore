@@ -1,43 +1,43 @@
 package me.domirusz24.plugincore.command;
 
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import me.domirusz24.plugincore.PluginCore;
 import me.domirusz24.plugincore.command.abstractclasses.BaseSubCommand;
 import me.domirusz24.plugincore.config.annotations.Language;
-import org.bukkit.ChatColor;
+import me.domirusz24.plugincore.core.chatgui.ChatGUI;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ReloadSubCommand extends BaseSubCommand {
+public class ChatGUILeaveCommand extends BaseSubCommand {
 
-    @Language("Command.Reload.Description")
-    public static String LANG_DESCRIPTION = "Allows you to reload the configs";
+    @Language("Command.Panel.Description")
+    public static String LANG_DESCRIPTION = "Panel control";
 
     @Override
     protected void execute(CommandSender sender, List<String> args) {
-        if (PluginCore.configM.reloadConfigs()) {
-            sender.sendMessage(ChatColor.GREEN + "Success!");
-        } else {
-            sender.sendMessage(ChatColor.RED + "Failure!");
+        if (isPlayer(sender)) {
+            ChatGUI gui = PluginCore.chatGuiM.getChatGUI((Player) sender);
+            if (gui != null) {
+                gui.unregister();
+            }
         }
     }
 
     @Override
     public List<String> autoComplete(CommandSender sender, List<String> args) {
-        return new ArrayList<>();
+        return null;
     }
 
     @Override
     protected String name() {
-        return "reload";
+        return "panel";
     }
 
     @Override
     protected String usage() {
-        return "reload";
+        return "panel";
     }
 
     @Override
@@ -47,6 +47,6 @@ public class ReloadSubCommand extends BaseSubCommand {
 
     @Override
     public PermissionDefault getPermissionDefault() {
-        return null;
+        return PermissionDefault.TRUE;
     }
 }

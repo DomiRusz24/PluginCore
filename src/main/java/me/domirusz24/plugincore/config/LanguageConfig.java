@@ -4,12 +4,11 @@ import me.domirusz24.plugincore.PluginCore;
 import me.domirusz24.plugincore.config.annotations.Language;
 import me.domirusz24.plugincore.managers.ConfigManager;
 import me.domirusz24.plugincore.util.UtilMethods;
+import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 
 public class LanguageConfig extends AbstractConfig {
@@ -32,17 +31,28 @@ public class LanguageConfig extends AbstractConfig {
 
     private boolean registerAnnotations() {
         List<Class<?>> classes = UtilMethods.findClasses();
-
         if (classes == null) {
             PluginCore.plugin.log(Level.WARNING, "Failed getting all classes!");
             return false;
         }
 
         Language annotation;
-
         for (Class<?> clazz : classes) {
             ANNOTATIONS_BY_CLASS.put(clazz, new ArrayList<>());
-            for (Field field : clazz.getDeclaredFields()) {
+            Iterator<Field> iterator;
+            try {
+                iterator = Arrays.asList(clazz.getDeclaredFields()).iterator();
+            } catch (Exception e) {
+                continue;
+            }
+
+            while (iterator.hasNext()) {
+                Field field;
+                try {
+                    field = iterator.next();
+                } catch (Exception e) {
+                    continue;
+                }
                 if (field.isAnnotationPresent(Language.class)) {
                     if (Modifier.isStatic(field.getModifiers())) {
                         field.setAccessible(true);

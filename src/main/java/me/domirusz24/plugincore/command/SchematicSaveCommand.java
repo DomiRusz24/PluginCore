@@ -6,6 +6,7 @@ import me.domirusz24.plugincore.util.Pair;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,5 +43,10 @@ public class SchematicSaveCommand extends BaseSubCommand {
     @Override
     protected String description() {
         return "Saves a schematic.";
+    }
+
+    @Override
+    public PermissionDefault getPermissionDefault() {
+        return null;
     }
 }

@@ -192,6 +192,15 @@ public class UtilMethods {
         return meta;
     }
 
+    public static String findColor(String prefix) {
+        StringBuilder color = new StringBuilder();
+        for (String s : prefix.split("§")) {
+            color.append("§").append(s.charAt(0));
+        }
+        if (prefix.charAt(prefix.length() - 1) == '§') color.append('§');
+        return color.toString();
+    }
+
 
     public static String translateColor(String string) {
         return ChatColor.translateAlternateColorCodes('&', string.replaceAll("\\Q|\\E\\Q|\\E", "\n&r"));
@@ -374,6 +383,7 @@ public class UtilMethods {
         ArrayList<String> listOfPossibleCompletions = new ArrayList<>();
 
         for (String foundString : possibilitiesOfCompletion) {
+            if (foundString == null) continue;
             if (foundString.regionMatches(true, 0, argumentToFindCompletionFor, 0, argumentToFindCompletionFor.length())) {
                 listOfPossibleCompletions.add(foundString);
             }
@@ -400,7 +410,13 @@ public class UtilMethods {
         if (loader != null) {
             try {
                 Enumeration<URL> resources = loader.getResources(path);
-                String jarloc = resources.nextElement().getPath();
+                String jarloc;
+                try {
+                    jarloc = resources.nextElement().getPath();
+                } catch (NoSuchElementException error) {
+                    error.printStackTrace();
+                    return null;
+                }
                 jarloc = jarloc.substring(5, jarloc.length() - path.length() - 2);
                 String s = URLDecoder.decode(jarloc, "UTF-8");
                 jar = new JarFile(new File(s));

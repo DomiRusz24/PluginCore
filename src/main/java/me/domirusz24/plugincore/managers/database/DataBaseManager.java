@@ -160,6 +160,10 @@ public class DataBaseManager extends Manager {
 
     }
 
+    public boolean isSqlLite() {
+        return !dbType.equals("mysql");
+    }
+
 
     public void closeConnection() {
 
