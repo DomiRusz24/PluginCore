@@ -1,6 +1,7 @@
-package me.domirusz24.plugincore.config;
+package me.domirusz24.plugincore.config.language;
 
 import me.domirusz24.plugincore.PluginCore;
+import me.domirusz24.plugincore.config.AbstractConfig;
 import me.domirusz24.plugincore.config.annotations.Language;
 import me.domirusz24.plugincore.managers.ConfigManager;
 import me.domirusz24.plugincore.util.UtilMethods;

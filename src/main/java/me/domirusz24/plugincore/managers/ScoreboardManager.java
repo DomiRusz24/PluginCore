@@ -1,8 +1,8 @@
 package me.domirusz24.plugincore.managers;
 
 import me.domirusz24.plugincore.PluginCore;
+import me.domirusz24.plugincore.core.displayable.CustomScoreboard;
 import me.domirusz24.plugincore.core.gui.CustomGUI;
-import me.domirusz24.plugincore.core.scoreboard.CustomScoreboard;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -22,7 +22,7 @@ public class ScoreboardManager extends Manager {
 
     public void put(Player player, CustomScoreboard board) {
         if (SCOREBOARD_BY_UUID.containsKey(player.getUniqueId())) {
-            SCOREBOARD_BY_UUID.get(player.getUniqueId()).unregister();
+            SCOREBOARD_BY_UUID.get(player.getUniqueId()).removePlayer(player);
         }
         SCOREBOARD_BY_UUID.put(player.getUniqueId(), board);
     }

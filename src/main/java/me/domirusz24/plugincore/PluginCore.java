@@ -42,7 +42,10 @@ softdepend: [Multiverse-Core]
     public static WorldEditManager worldEditM;
     public static ChatGUIManager chatGuiM;
     public static ScoreboardManager boardM;
-    public static PlayerDataManager playerDataM = null;
+    public static me.domirusz24.plugincore.managers.ProtocolManager nmsM;
+    public static SignManager signM;
+    public static PAPIManager papiM;
+    public static PlayerDataManager playerDataM;
 
     @Override
     public void onEnable() {
@@ -108,6 +111,8 @@ softdepend: [Multiverse-Core]
 
     public abstract DataBaseTable[] getTables();
 
+    protected abstract PAPIManager papiManager();
+
     private void loadManagers() {
 
         regionM = new RegionManager(plugin);
@@ -122,6 +127,11 @@ softdepend: [Multiverse-Core]
         // Command
         commandM = new CommandManager(plugin);
 
+        papiM = papiManager();
+        papiM.register();
+
+        nmsM = new me.domirusz24.plugincore.managers.ProtocolManager(this, ProtocolLibrary.getProtocolManager());
+
         guiM = new GUIManager(plugin);
 
         chatGuiM = new ChatGUIManager(plugin);
@@ -131,6 +141,8 @@ softdepend: [Multiverse-Core]
         playerDataM = new PlayerDataManager(plugin);
 
         boardM = new ScoreboardManager(plugin);
+
+        signM = new SignManager(plugin);
 
         _loadManagers();
         _loadCommands();

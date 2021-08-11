@@ -2,11 +2,15 @@ package me.domirusz24.plugincore.config;
 
 import me.domirusz24.plugincore.config.configvalue.AbstractConfigValue;
 import me.domirusz24.plugincore.PluginCore;
+import me.domirusz24.plugincore.core.displayable.CustomSign;
 import me.domirusz24.plugincore.core.region.CustomRegion;
 import me.domirusz24.plugincore.managers.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -150,6 +154,25 @@ public abstract class AbstractConfig extends YamlConfiguration {
             return null;
         }
         return new Location(world, x + 0.5, y, z + 0.5, (float) yaw, (float) pitch);
+    }
+
+    public void setSign(String path, CustomSign hologram) {
+        setLocation(path, hologram.getLocation());
+    }
+
+    public CustomSign getSign(String path, String ID) {
+        CustomSign sign = PluginCore.signM.getSign(ID);
+        if (sign == null) {
+            sign = new CustomSign(ID);
+            Location location = getLocation(path);
+            if (location != null) {
+                Block block = location.getBlock();
+                if (block.getType().name().contains("SIGN")) {
+                    sign.setSign((Sign) block.getState());
+                }
+            }
+        }
+        return sign;
     }
 
     public void setWESelection(String path, Location min, Location max) {

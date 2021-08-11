@@ -9,6 +9,8 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.projectkorra.projectkorra.ability.CoreAbility;
 import me.domirusz24.plugincore.core.chatgui.ChatGUI;
+import me.domirusz24.plugincore.core.displayable.interfaces.LeftClickable;
+import me.domirusz24.plugincore.core.displayable.interfaces.RightClickable;
 import me.domirusz24.plugincore.core.players.AbstractPlayer;
 import me.domirusz24.plugincore.core.players.glide.PlayerGlide;
 import me.domirusz24.plugincore.core.protocollib.ProtocolUtil;
@@ -35,9 +37,27 @@ public class CoreListener implements Listener {
     private static int baseComponentIndex = -1;
 
     private static final HashSet<PerTick> PER_TICKABLE = new HashSet<>();
+    private static final HashSet<LeftClickable> LEFT_CLICKABLES = new HashSet<>();
+    private static final HashSet<RightClickable> RIGHT_CLICKABLES = new HashSet<>();
+
+    public static void hookInListener(LeftClickable clickable) {
+        LEFT_CLICKABLES.add(clickable);
+    }
+
+    public static void hookInListener(RightClickable clickable) {
+        RIGHT_CLICKABLES.add(clickable);
+    }
 
     public static void hookInListener(PerTick tickable) {
         PER_TICKABLE.add(tickable);
+    }
+
+    public static void removeListener(LeftClickable clickable) {
+        LEFT_CLICKABLES.remove(clickable);
+    }
+
+    public static void removeListener(RightClickable clickable) {
+        RIGHT_CLICKABLES.remove(clickable);
     }
 
     public static void removeListener(PerTick tickable) {

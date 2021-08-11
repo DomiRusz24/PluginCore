@@ -5,6 +5,7 @@ import me.domirusz24.plugincore.attributes.Attribute;
 import me.domirusz24.plugincore.attributes.AttributeAble;
 import me.domirusz24.plugincore.attributes.AttributeBase;
 import me.domirusz24.plugincore.attributes.PlayerAttribute;
+import me.domirusz24.plugincore.core.placeholders.PlaceholderPlayer;
 import me.domirusz24.plugincore.managers.database.DataBaseTable;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -14,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class PlayerData extends AttributeAble {
+public abstract class PlayerData extends AttributeAble implements PlaceholderPlayer {
     private boolean sqlLoaded = false;
     protected final UUID uuid;
     protected final String name;

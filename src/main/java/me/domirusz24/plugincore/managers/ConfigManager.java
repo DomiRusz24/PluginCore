@@ -2,6 +2,7 @@ package me.domirusz24.plugincore.managers;
 
 import me.domirusz24.plugincore.PluginCore;
 import me.domirusz24.plugincore.config.*;
+import me.domirusz24.plugincore.config.language.LanguageConfig;
 
 import java.util.ArrayList;
 
