@@ -1,5 +1,9 @@
 package me.domirusz24.plugincore.config.language.dynamics;
 
+import me.domirusz24.plugincore.core.placeholders.PlaceholderObject;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+
 import java.util.HashMap;
 
 public class SuggestMessage extends HoverableMessage {
@@ -12,7 +16,14 @@ public class SuggestMessage extends HoverableMessage {
         this.suggest = DynamicString.of(suggest, path + ".suggest");
     }
 
-    public DynamicString getCommand() {
+    @Override
+    public TextComponent getText(PlaceholderObject... objects) {
+        TextComponent t = super.getText(objects);
+        t.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, getSuggest().get(objects)));
+        return t;
+    }
+
+    public DynamicString getSuggest() {
         return suggest;
     }
 

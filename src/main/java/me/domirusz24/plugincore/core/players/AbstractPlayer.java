@@ -37,6 +37,16 @@ public abstract class AbstractPlayer implements PlaceholderPlayer {
         PLAYERS.add(this);
     }
 
+    public void toggleBoard(boolean toggle) {
+        if (scoreboard != null) {
+            if (toggle) {
+                scoreboard.addPlayer(player);
+            } else {
+                scoreboard.removePlayer(player);
+            }
+        }
+    }
+
     public void unregister() {
         if (registered) {
             if (bossBar != null) bossBar.removeAll();

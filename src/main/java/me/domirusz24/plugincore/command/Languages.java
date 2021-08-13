@@ -2,7 +2,7 @@ package me.domirusz24.plugincore.command;
 
 import me.domirusz24.plugincore.config.annotations.Language;
 
-public final class Languages {
+public class Languages {
 
     @Language("Command.Success")
     public static String SUCCESS = "&aSuccess!";

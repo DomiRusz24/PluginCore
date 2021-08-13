@@ -20,7 +20,11 @@ public class PlayerDataManager extends Manager {
 
     public PlayerData getPlayer(String name, UUID uuid) {
         if (!PLAYER_BY_UUID.containsKey(uuid)) {
-            register(plugin.registerPlayer(name, uuid));
+            PlayerData p = plugin.registerPlayer(name, uuid);
+            if (p != null) {
+                register(p);
+            }
+            return null;
         }
         return PLAYER_BY_UUID.get(uuid);
     }

@@ -68,6 +68,7 @@ public abstract class PlayerData extends AttributeAble implements PlaceholderPla
 
     public abstract DataBaseTable getTable();
 
+
     public void onJoin() {
         player = Bukkit.getPlayer(uuid);
         onPlayerJoin();

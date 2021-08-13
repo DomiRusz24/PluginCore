@@ -12,6 +12,7 @@ import me.domirusz24.plugincore.core.chatgui.ChatGUI;
 import me.domirusz24.plugincore.core.displayable.interfaces.LeftClickable;
 import me.domirusz24.plugincore.core.displayable.interfaces.RightClickable;
 import me.domirusz24.plugincore.core.players.AbstractPlayer;
+import me.domirusz24.plugincore.core.players.PlayerData;
 import me.domirusz24.plugincore.core.players.glide.PlayerGlide;
 import me.domirusz24.plugincore.core.protocollib.ProtocolUtil;
 import me.domirusz24.plugincore.core.protocollib.wrappers.*;
@@ -206,7 +207,10 @@ public class CoreListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         if (PluginCore.playerDataM.exists(event.getPlayer().getUniqueId())) {
-            PluginCore.playerDataM.getPlayer(event.getPlayer().getName(), event.getPlayer().getUniqueId()).onJoin();
+            PlayerData p = PluginCore.playerDataM.getPlayer(event.getPlayer().getName(), event.getPlayer().getUniqueId());
+            if (p != null) {
+                p.onJoin();
+            }
         } else {
             PluginCore.playerDataM.getPlayer(event.getPlayer().getName(), event.getPlayer().getUniqueId());
         }
@@ -227,7 +231,10 @@ public class CoreListener implements Listener {
         }
         ProtocolUtil.TELEPORT_LOCATION.remove(event.getPlayer().getEntityId());
         ProtocolUtil.FREEZE_LOCATION.remove(event.getPlayer());
-        PluginCore.playerDataM.getPlayer(event.getPlayer().getName(), event.getPlayer().getUniqueId()).onLeave();
+        PlayerData p = PluginCore.playerDataM.getPlayer(event.getPlayer().getName(), event.getPlayer().getUniqueId());
+        if (p != null) {
+            p.onLeave();
+        }
     }
 
     @EventHandler

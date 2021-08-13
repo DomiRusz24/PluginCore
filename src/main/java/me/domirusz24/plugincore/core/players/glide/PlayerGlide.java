@@ -119,9 +119,8 @@ public class PlayerGlide extends AbstractPlayer implements CompleteListener, Per
             UtilMethods.removeSpectatorMode(player);
             ProtocolUtil.setGameMode(player, gameMode);
             if (teleportToOrigin) player.teleport(origin);
-            if (!canFly) player.setFlying(false);
+            player.setFlying(hadFlight);
             player.setAllowFlight(canFly);
-            if (canFly) player.setFlying(hadFlight);
             player.setFlySpeed(flySpeed);
             inGlide.remove(player.getName());
             finish.run();

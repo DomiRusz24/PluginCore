@@ -128,7 +128,7 @@ softdepend: [Multiverse-Core]
         commandM = new CommandManager(plugin);
 
         papiM = papiManager();
-        papiM.register();
+        if (papiM != null) papiM.register();
 
         nmsM = new me.domirusz24.plugincore.managers.ProtocolManager(this, ProtocolLibrary.getProtocolManager());
 

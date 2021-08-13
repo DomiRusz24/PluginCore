@@ -1,5 +1,10 @@
 package me.domirusz24.plugincore.config.language.dynamics;
 
+import me.domirusz24.plugincore.core.placeholders.PlaceholderObject;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
+
 import java.util.HashMap;
 
 public class HoverableMessage extends DynamicString {
@@ -11,6 +16,12 @@ public class HoverableMessage extends DynamicString {
     protected HoverableMessage(String defaultValue, String path, String hover) {
         super(defaultValue, path + ".message");
         this.hover = DynamicString.of(hover, path + ".hover");
+    }
+
+    public TextComponent getText(PlaceholderObject... objects) {
+        TextComponent t = new TextComponent(get(objects));
+        t.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(getHover().get(objects))));
+        return t;
     }
 
     public DynamicString getHover() {

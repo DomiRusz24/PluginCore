@@ -1,8 +1,12 @@
 package me.domirusz24.plugincore.config.language.dynamics;
 
 import me.domirusz24.plugincore.PluginCore;
+import me.domirusz24.plugincore.core.placeholders.PlaceholderObject;
 import me.domirusz24.plugincore.managers.ConfigManager;
+import me.domirusz24.plugincore.managers.PAPIManager;
+import me.domirusz24.plugincore.util.UtilMethods;
 
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.HashMap;
 import java.util.function.Supplier;
 
@@ -31,7 +35,15 @@ public class DynamicString implements ConfigManager.Reloadable {
     }
 
     private void reload() {
-        string = PluginCore.configM.getLanguageConfig().getString(path);
+        string = UtilMethods.translateColor(PluginCore.configM.getLanguageConfig().getString(path));
+    }
+
+    public String get(PlaceholderObject... objects) {
+        String s = string;
+        for (PlaceholderObject object : objects) {
+            s = PAPIManager.setPlaceholders(object, s);
+        }
+        return s;
     }
 
     public String get() {

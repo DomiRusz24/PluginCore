@@ -1,13 +1,15 @@
 package me.domirusz24.plugincore.core.team;
 
+import me.domirusz24.plugincore.core.placeholders.PlaceholderObject;
 import me.domirusz24.plugincore.core.players.AbstractPlayer;
+import me.domirusz24.plugincore.managers.PAPIManager;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public abstract class AbstractTeam<T extends AbstractPlayer> {
+public abstract class AbstractTeam<T extends PlaceholderObject> implements PlaceholderObject {
 
     private final String name;
     protected final ArrayList<T> players;
@@ -21,6 +23,10 @@ public abstract class AbstractTeam<T extends AbstractPlayer> {
         for (int i = 0; i < size; i++) {
             players.add(null);
         }
+    }
+
+    public String getInfo() {
+        return PAPIManager.setPlaceholders(this, getSyntax());
     }
 
     public String getName() {
@@ -97,12 +103,49 @@ public abstract class AbstractTeam<T extends AbstractPlayer> {
         return getCurrentSize() == getSize();
     }
 
-    public void sendMessage(String message) {
-        getPlayers().forEach((p) -> p.getPlayer().sendMessage(message));
+    public abstract void sendMessage(String message);
+
+    public abstract void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut);
+
+    public abstract String getPlayerInfoSyntax();
+
+    public abstract String getNullPlayerInfoSyntax();
+
+    public abstract String getSyntax();
+
+    protected abstract String _onPlaceholderRequest(String message);
+
+    public String onPlaceholderRequest(String message) {
+        return onPlaceholderRequest(message, false);
     }
 
-    public void sendTitle(String title, String subtitle, int fadeIn, int stay, int fadeOut) {
-        getPlayers().forEach((p) -> p.getPlayer().sendTitle(title, subtitle, fadeIn, stay, fadeOut));
+    @Override
+    public String placeHolderPrefix() {
+        return "team";
     }
 
+    public String onPlaceholderRequest(String message, boolean nullValues) {
+        if (message.equalsIgnoreCase("players")) {
+            StringBuilder playerInfo = new StringBuilder();
+            int index = 0;
+            for (T object : getNullPlayers()) {
+                if (object == null) {
+                    if (nullValues) {
+                        index++;
+                        playerInfo.append(getNullPlayerInfoSyntax().replaceAll("%row%", String.valueOf(index)));
+                    }
+                } else {
+                    index++;
+                    playerInfo.append(PAPIManager.setPlaceholders(object, getPlayerInfoSyntax().replaceAll("%row%", String.valueOf(index))));
+                }
+            }
+            return playerInfo.toString();
+        } else if (message.equalsIgnoreCase("name")) {
+            return getName();
+        } else if (message.equalsIgnoreCase("size")) {
+            return String.valueOf(getSize());
+        } else {
+            return _onPlaceholderRequest(message);
+        }
+    }
 }
