@@ -64,6 +64,10 @@ public abstract class AbstractConfigValue<T> {
         }
     }
 
+    public T getDefaultValue() {
+        return defaultValue;
+    }
+
     public abstract void _setValue(T value);
 
     public abstract void _setDefaultValue(T value);

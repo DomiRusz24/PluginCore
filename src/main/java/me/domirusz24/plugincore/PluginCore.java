@@ -118,6 +118,7 @@ softdepend: [Multiverse-Core]
         regionM = new RegionManager(plugin);
         // Config
         configM = new ConfigManager(this);
+        configM.loadConfigs();
         loadConfigs();
 
         // SQL

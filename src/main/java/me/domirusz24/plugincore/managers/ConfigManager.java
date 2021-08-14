@@ -23,16 +23,16 @@ public class ConfigManager extends Manager {
 
     public ConfigManager(PluginCore plugin) {
         super(plugin);
-        loadConfigs();
     }
 
     // Plugin load
-    private void loadConfigs() {
+    public void loadConfigs() {
         // Config
         config = new PluginConfig("config.yml", plugin, this);
 
         // Language config
         languageConfig = new LanguageConfig("language.yml", plugin, this);
+        getLanguageConfig().registerAnnotations();
 
         schematicConfig = new SchematicLocationsConfig("SchematicMinLocations.yml", plugin, this);
 

@@ -109,7 +109,9 @@ public abstract class AbstractConfig extends YamlConfiguration {
         if (!file.exists()) {
             if (!createFile()) return false;
         }
-        values.forEach(AbstractConfigValue::saveDefault);
+        for (AbstractConfigValue<?> value : values) {
+            value.saveDefault();
+        }
         try {
             save(file);
         } catch (IOException e) {

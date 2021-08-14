@@ -18,7 +18,6 @@ public class LanguageConfig extends AbstractConfig {
 
     public LanguageConfig(String path, PluginCore plugin, ConfigManager manager) {
         super(path, plugin, manager);
-        registerAnnotations();
     }
 
     @Override
@@ -30,7 +29,7 @@ public class LanguageConfig extends AbstractConfig {
         return false;
     }
 
-    private boolean registerAnnotations() {
+    public boolean registerAnnotations() {
         List<Class<?>> classes = UtilMethods.findClasses();
         if (classes == null) {
             PluginCore.plugin.log(Level.WARNING, "Failed getting all classes!");

@@ -1,16 +1,19 @@
 package me.domirusz24.plugincore.config.language.dynamics;
 
 import me.domirusz24.plugincore.PluginCore;
+import me.domirusz24.plugincore.config.configvalue.ConfigValue;
 import me.domirusz24.plugincore.core.placeholders.PlaceholderObject;
 import me.domirusz24.plugincore.managers.ConfigManager;
 import me.domirusz24.plugincore.managers.PAPIManager;
+import me.domirusz24.plugincore.managers.database.values.StringValue;
 import me.domirusz24.plugincore.util.UtilMethods;
+import org.bukkit.Bukkit;
 
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.HashMap;
 import java.util.function.Supplier;
 
-public class DynamicString implements ConfigManager.Reloadable {
+public class DynamicString {
 
     private static HashMap<String, DynamicString> STRING_BY_PATH = new HashMap<>();
 
@@ -25,21 +28,17 @@ public class DynamicString implements ConfigManager.Reloadable {
 
     private final String path;
 
-    private String string;
+    private ConfigValue<String> string;
 
     protected DynamicString(String value, String path) {
         this.path = path;
-        PluginCore.configM.getLanguageConfig().addDefault(path, value);
-        reload();
-        registerReloadable();
+        this.string = new ConfigValue<>(path, value, PluginCore.configM.getLanguageConfig());
+        System.out.println(value + " -> " + path);
     }
 
-    private void reload() {
-        string = UtilMethods.translateColor(PluginCore.configM.getLanguageConfig().getString(path));
-    }
 
     public String get(PlaceholderObject... objects) {
-        String s = string;
+        String s = string.getValue();
         for (PlaceholderObject object : objects) {
             s = PAPIManager.setPlaceholders(object, s);
         }
@@ -47,19 +46,14 @@ public class DynamicString implements ConfigManager.Reloadable {
     }
 
     public String get() {
-        return string;
+        return string.getValue();
     }
 
     public Supplier<String> getGetter() {
-        return () -> string;
+        return () -> string.getValue();
     }
 
     public String getPath() {
         return path;
-    }
-
-    @Override
-    public void onReload() {
-        reload();
     }
 }
