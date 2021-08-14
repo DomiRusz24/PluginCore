@@ -19,12 +19,15 @@ public class PlayerGlideTimeAction extends GlideAction {
 
     @Override
     public void setFrom(Location from) {
+        from.setDirection(from.getDirection().normalize());
+        to.setDirection(to.getDirection().normalize());
         super.setFrom(from);
         double distance = from.distance(to);
         double speed = (double) (distance / (double) ticks);
         this.direction = to.toVector().subtract(from.toVector()).normalize().multiply(speed);
         pitchTurn = (float) (Math.abs(from.getPitch() - to.getPitch()) * (float) getBestTurn(from.getPitch() + 180, to.getPitch() + 180)) / (float) ticks;
         yawTurn = (float) (Math.abs(from.getYaw() - to.getYaw()) * (float) getBestTurn((from.getYaw() % 180) + 180, (to.getYaw() % 180) + 180)) / (float) ticks;
+        System.out.println("| Yaw: " + yawTurn + " | Pitch: " + pitchTurn + " | Tick: " + ticks + " | Distance: " + distance + " | Yaw location: " + from.getYaw() + " : " + to.getYaw() + " | ");
     }
 
     private static int getBestTurn(float start, float finish) {
