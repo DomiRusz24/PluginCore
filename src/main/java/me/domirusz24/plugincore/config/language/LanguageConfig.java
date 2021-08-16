@@ -41,7 +41,7 @@ public class LanguageConfig extends AbstractConfig {
             Field[] declaredFields;
             try {
                 declaredFields = clazz.getDeclaredFields();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 continue;
             }
             ANNOTATIONS_BY_CLASS.put(clazz, new ArrayList<>());
@@ -51,7 +51,7 @@ public class LanguageConfig extends AbstractConfig {
                 Field field;
                 try {
                     field = declaredFields[i];
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     continue;
                 }
                 try {
