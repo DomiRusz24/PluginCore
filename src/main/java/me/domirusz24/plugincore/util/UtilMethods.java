@@ -203,11 +203,11 @@ public class UtilMethods {
 
 
     public static String translateColor(String string) {
+        if (string == null) return null;
         return ChatColor.translateAlternateColorCodes('&', string.replaceAll("\\Q|\\E\\Q|\\E", "\n&r"));
     }
 
     public static String[] wordWrap(final String rawString, final int lineLength, final String wrapPrefix) {
-
         // A null string is a single line
         if (rawString == null) {
             return new String[]{""};
@@ -324,6 +324,7 @@ public class UtilMethods {
     }
 
     public static String getLastColors(final String input) {
+        if (input == null) return null;
         ChatColor lastColor = null;
         final List<ChatColor> lastFormats = new ArrayList<>();
 
@@ -364,6 +365,7 @@ public class UtilMethods {
     }
 
     public static String[] stringToList(String string) {
+        if (string == null) return null;
         return string.split("\\n");
     }
 
@@ -520,8 +522,10 @@ public class UtilMethods {
         ItemStack is = new ItemStack(type, 1);
         is.setDurability(data);
         ItemMeta meta = is.getItemMeta();
-        meta.setDisplayName(name);
-        meta.setLore(Arrays.asList(desc));
+        if (name != null) {
+            meta.setDisplayName(name);
+        }
+        if (desc.length != 0) meta.setLore(Arrays.asList(desc));
         meta.setUnbreakable(true);
         if (glow) {
             meta.addEnchant(Enchantment.LUCK, 1, false);
