@@ -38,40 +38,43 @@ public class LanguageConfig extends AbstractConfig {
 
         Language annotation;
         for (Class<?> clazz : classes) {
-            ANNOTATIONS_BY_CLASS.put(clazz, new ArrayList<>());
-            Iterator<Field> iterator;
+            Field[] declaredFields;
             try {
-                iterator = Arrays.asList(clazz.getDeclaredFields()).iterator();
+                declaredFields = clazz.getDeclaredFields();
             } catch (Exception e) {
                 continue;
             }
+            ANNOTATIONS_BY_CLASS.put(clazz, new ArrayList<>());
 
-            while (iterator.hasNext()) {
+
+            for (int i = 0; i < declaredFields.length; i++) {
                 Field field;
                 try {
-                    field = iterator.next();
+                    field = declaredFields[i];
                 } catch (Exception e) {
                     continue;
                 }
-                if (field.isAnnotationPresent(Language.class)) {
-                    if (Modifier.isStatic(field.getModifiers())) {
-                        field.setAccessible(true);
-                        annotation = field.getAnnotation(Language.class);
-                        ANNOTATIONS_BY_CLASS.get(clazz).add(field);
-                        try {
-                            addDefault(annotation.value(), field.get(null));
-                            if (isString(annotation.value())) {
-                                field.set(null, UtilMethods.translateColor((String) get(annotation.value())));
-                            } else {
-                                field.set(null, get(annotation.value()));
+                try {
+                    if (field.isAnnotationPresent(Language.class)) {
+                        if (Modifier.isStatic(field.getModifiers())) {
+                            field.setAccessible(true);
+                            annotation = field.getAnnotation(Language.class);
+                            ANNOTATIONS_BY_CLASS.get(clazz).add(field);
+                            try {
+                                addDefault(annotation.value(), field.get(null));
+                                if (isString(annotation.value())) {
+                                    field.set(null, UtilMethods.translateColor((String) get(annotation.value())));
+                                } else {
+                                    field.set(null, get(annotation.value()));
+                                }
+                            } catch (Exception e) {
+                                PluginCore.plugin.log(Level.WARNING, "Error loading language annotations in " + field.getName() + ", in class " + clazz.getName());
+                                e.printStackTrace();
                             }
-                        } catch (Exception e) {
-                            PluginCore.plugin.log(Level.WARNING, "Error loading language annotations in " + field.getName() + ", in class " + clazz.getName());
-                            e.printStackTrace();
-                        }
 
+                        }
                     }
-                }
+                } catch (Exception ignored) {}
             }
         }
         return save();
