@@ -28,6 +28,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
 import org.bukkit.plugin.Plugin;
 
@@ -244,5 +245,31 @@ public class CoreListener implements Listener {
                 event.setCancelled(true);
             }
         }
+    }
+
+    @EventHandler()
+    public void onInteract(PlayerInteractEvent event) {
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
+            RIGHT_CLICKABLES.forEach(p -> {
+                if (p.isRightClickedOn(event)) {
+                    p.onRightClick(event.getPlayer());
+                }
+            });
+        } else if (event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_AIR) {
+            LEFT_CLICKABLES.forEach(p -> {
+                if (p.isLeftClickedOn(event)) {
+                    p.onLeftClick(event.getPlayer());
+                }
+            });
+        }
+    }
+
+    @EventHandler
+    public void onEntityInteract(PlayerInteractAtEntityEvent event) {
+        RIGHT_CLICKABLES.forEach(p -> {
+            if (p.isRightClickedOn(event)) {
+                p.onRightClick(event.getPlayer());
+            }
+        });
     }
 }

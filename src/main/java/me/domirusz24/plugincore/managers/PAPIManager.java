@@ -66,7 +66,7 @@ public abstract class PAPIManager extends PlaceholderExpansion {
                 Matcher m = PlaceholderAPI.getPlaceholderPattern().matcher(text);
                 while (m.find()) {
                     String format = m.group(1);
-                    if (format.startsWith(PluginCore.plugin.getName().toLowerCase())) {
+                    if (format.startsWith(object.placeHolderPrefix())) {
                         int index = format.indexOf("_");
                         if (index > 0 && index < format.length()) {
                             String params = format.substring(index + 1);

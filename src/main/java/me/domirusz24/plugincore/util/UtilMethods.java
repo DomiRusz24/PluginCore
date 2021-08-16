@@ -17,7 +17,9 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -65,6 +67,41 @@ public class UtilMethods {
 
     public static void removeSpectatorMode(Player player) {
         IN_SPECTATOR.remove(player.getName());
+    }
+
+    public static void copyURLToFile(URL url, File file) {
+
+        try {
+            InputStream input = url.openStream();
+            if (file.exists()) {
+                if (file.isDirectory())
+                    throw new IOException("File '" + file + "' is a directory");
+
+                if (!file.canWrite())
+                    throw new IOException("File '" + file + "' cannot be written");
+            } else {
+                File parent = file.getParentFile();
+                if ((parent != null) && (!parent.exists()) && (!parent.mkdirs())) {
+                    throw new IOException("File '" + file + "' could not be created");
+                }
+            }
+
+            FileOutputStream output = new FileOutputStream(file);
+
+            byte[] buffer = new byte[4096];
+            int n = 0;
+            while (-1 != (n = input.read(buffer))) {
+                output.write(buffer, 0, n);
+            }
+
+            input.close();
+            output.close();
+
+            System.out.println("File '" + file + "' downloaded successfully!");
+        }
+        catch(IOException ioEx) {
+            ioEx.printStackTrace();
+        }
     }
 
     public static String locationToString(Location location, boolean world) {
@@ -446,6 +483,10 @@ public class UtilMethods {
             }
         }
         return classes;
+    }
+
+    public static boolean hasScoreboard(Player player) {
+        return !player.getScoreboard().equals(Bukkit.getScoreboardManager().getMainScoreboard());
     }
 
     // Outputs all files in a directory

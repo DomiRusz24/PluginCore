@@ -27,8 +27,6 @@ public abstract class CustomRegion {
         PluginCore.regionM.addRegion(this);
     }
 
-    public abstract int delay();
-
     protected abstract void onPlayerEnter(Player player);
 
     protected abstract void onPlayerLeave(Player player);

@@ -21,13 +21,9 @@ public class RegionManager extends Manager {
         new BukkitRunnable() {
             @Override
             public void run() {
-                tick++;
-                getRegions().forEach((r) -> {
-                    if (tick % r.delay() == 0)
-                    r.updatePlayers();
-                });
+                getRegions().forEach(CustomRegion::updatePlayers);
             }
-        }.runTaskTimer(plugin, 20, 1);
+        }.runTaskTimer(plugin, 10, 2);
     }
 
     public void addRegion(CustomRegion Region) {

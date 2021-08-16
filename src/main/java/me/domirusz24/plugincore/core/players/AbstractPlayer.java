@@ -2,6 +2,7 @@ package me.domirusz24.plugincore.core.players;
 
 import me.domirusz24.plugincore.core.displayable.CustomScoreboard;
 import me.domirusz24.plugincore.core.placeholders.PlaceholderPlayer;
+import me.domirusz24.plugincore.util.UtilMethods;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -27,7 +28,15 @@ public abstract class AbstractPlayer implements PlaceholderPlayer {
         bossBar = bossBar();
         scoreboard = scoreboard();
         if (bossBar != null) bossBar.addPlayer(player);
-        if (scoreboard != null) scoreboard.addPlayer(player);
+        if (scoreboard != null) {
+            if (!overrideScoreBoard()) {
+                if (!UtilMethods.hasScoreboard(player)) {
+                    scoreboard.addPlayer(player);
+                }
+            } else {
+                scoreboard.addPlayer(player);
+            }
+        }
         if (resetInventory()) {
             inventory = player.getInventory().getContents();
             player.getInventory().clear();
@@ -72,6 +81,10 @@ public abstract class AbstractPlayer implements PlaceholderPlayer {
 
     protected CustomScoreboard scoreboard() {
         return null;
+    }
+
+    protected boolean overrideScoreBoard() {
+        return true;
     }
 
     public BossBar getBossBar() {
