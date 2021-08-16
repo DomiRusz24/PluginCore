@@ -27,8 +27,6 @@ public abstract class CustomRegion {
         PluginCore.regionM.addRegion(this);
     }
 
-    public abstract int delay();
-
     protected abstract void onPlayerEnter(Player player);
 
     protected abstract void onPlayerLeave(Player player);
@@ -103,7 +101,9 @@ public abstract class CustomRegion {
     }
 
     public void setLocations(Location min, Location max) {
-        if (min != null && max != null && min.getWorld().equals(max.getWorld())) {
+        if (min == null || max == null) return;
+        if (min.getWorld() == null || max.getWorld() == null) return;
+        if (min.getWorld().equals(max.getWorld())) {
             this.world = min.getWorld();
             x1 = Math.min(min.getX(), max.getX());
             x2 = Math.max(min.getX(), max.getX());

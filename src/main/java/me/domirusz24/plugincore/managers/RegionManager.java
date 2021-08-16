@@ -14,20 +14,16 @@ public class RegionManager extends Manager {
         return Region_BY_ID.values();
     }
 
-    private int tick = 0;
-
     public RegionManager(PluginCore plugin) {
         super(plugin);
         new BukkitRunnable() {
             @Override
             public void run() {
-                tick++;
                 getRegions().forEach((r) -> {
-                    if (tick % r.delay() == 0)
                     r.updatePlayers();
                 });
             }
-        }.runTaskTimer(plugin, 20, 1);
+        }.runTaskTimer(plugin, 10, 2);
     }
 
     public void addRegion(CustomRegion Region) {
