@@ -475,10 +475,7 @@ public class UtilMethods {
                     try {
                         clazz = Class.forName(className, true, loader);
                         if (clazz != null) classes.add(clazz);
-                    } catch (Error | Exception error) {
-                        error.printStackTrace();
-                        return null;
-                    }
+                    } catch (Error | Exception ignored) {}
                 }
             }
         }
