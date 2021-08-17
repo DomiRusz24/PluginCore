@@ -14,14 +14,14 @@ public class RegionManager extends Manager {
         return Region_BY_ID.values();
     }
 
-    private int tick = 0;
-
     public RegionManager(PluginCore plugin) {
         super(plugin);
         new BukkitRunnable() {
             @Override
             public void run() {
-                getRegions().forEach(CustomRegion::updatePlayers);
+                getRegions().forEach((r) -> {
+                    r.updatePlayers();
+                });
             }
         }.runTaskTimer(plugin, 10, 2);
     }

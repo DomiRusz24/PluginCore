@@ -19,8 +19,8 @@ public class PlayerGlideTimeAction extends GlideAction {
 
     @Override
     public void setFrom(Location from) {
-        from.setDirection(from.getDirection());
-        to.setDirection(to.getDirection());
+        from.setDirection(from.getDirection().normalize());
+        to.setDirection(to.getDirection().normalize());
         super.setFrom(from);
         double distance = from.distance(to);
         double speed = (double) (distance / (double) ticks);

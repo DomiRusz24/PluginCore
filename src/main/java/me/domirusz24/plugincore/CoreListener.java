@@ -94,11 +94,13 @@ public class CoreListener implements Listener {
                     int z = map.getChunkZ() * 16;
                     Player player = packetEvent.getPlayer();
                     Bukkit.getScheduler().runTask(PluginCore.plugin, () -> {
-                        if (PluginCore.worldEditM.isAvailable(player.getLocation().getWorld().getChunkAt(new Location(player.getLocation().getWorld(), x, 10, z)), player)) {
-                            Bukkit.getScheduler().runTaskLater(PluginCore.plugin, () -> {
-                                PluginCore.worldEditM.chunk(player.getLocation().getWorld().getChunkAt(new Location(player.getLocation().getWorld(), x, 10, z)), player);
-                            }, 10);
-                        }
+                        try {
+                            if (PluginCore.worldEditM.isAvailable(player.getLocation().getWorld().getChunkAt(new Location(player.getLocation().getWorld(), x, 10, z)), player)) {
+                                Bukkit.getScheduler().runTaskLater(PluginCore.plugin, () -> {
+                                    PluginCore.worldEditM.chunk(player.getLocation().getWorld().getChunkAt(new Location(player.getLocation().getWorld(), x, 10, z)), player);
+                                }, 10);
+                            }
+                        } catch (Throwable ignored){}
                     });
                 } else if (packetEvent.getPacketType().equals(PacketType.Play.Server.CHAT)) {
                     final WrapperPlayServerChat chat = new WrapperPlayServerChat(packetEvent.getPacket());
