@@ -21,7 +21,7 @@ public class SQLAttribute extends AttributeBase<PlayerData> implements DatabaseO
         exists((b) -> {
             if (!b) {
                 putDefault(() -> {
-                    PluginCore.plugin.log(Level.INFO, "Created player data for " + name + "!");
+                    main.getCorePlugin().log(Level.INFO, "Created player data for " + name + "!");
                     loadDataFromSQL(name);
                 });
             } else {
@@ -36,8 +36,8 @@ public class SQLAttribute extends AttributeBase<PlayerData> implements DatabaseO
             for (String s : p.keySet()) {
                 VALUES.put(s, p.get(s));
             }
-            PluginCore.plugin.log(Level.INFO, "Loaded player data for " + getStringValue("name") + "!");
-            Bukkit.getScheduler().runTask(PluginCore.plugin, main::sqlLoad);
+            main.getCorePlugin().log(Level.INFO, "Loaded player data for " + getStringValue("name") + "!");
+            Bukkit.getScheduler().runTask(main.getCorePlugin(), main::sqlLoad);
         });
     }
 

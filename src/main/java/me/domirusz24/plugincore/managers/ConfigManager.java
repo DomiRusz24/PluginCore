@@ -3,6 +3,7 @@ package me.domirusz24.plugincore.managers;
 import me.domirusz24.plugincore.PluginCore;
 import me.domirusz24.plugincore.config.*;
 import me.domirusz24.plugincore.config.language.LanguageConfig;
+import me.domirusz24.plugincore.core.PluginInstance;
 
 import java.util.ArrayList;
 
@@ -81,13 +82,13 @@ public class ConfigManager extends Manager {
         reloadables.remove(reloadable);
     }
 
-    public interface Reloadable {
+    public interface Reloadable extends PluginInstance {
         default void registerReloadable() {
-            PluginCore.configM.registerReloadable(this);
+            getCorePlugin().configM.registerReloadable(this);
         }
 
         default void unregisterReloadable() {
-            PluginCore.configM.unregisterReloadable(this);
+            getCorePlugin().configM.unregisterReloadable(this);
         }
 
         void onReload();

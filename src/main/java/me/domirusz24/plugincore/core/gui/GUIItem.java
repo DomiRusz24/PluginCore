@@ -20,7 +20,10 @@ public class GUIItem {
 
     protected int slot;
 
-    public GUIItem(Consumer<Player> leftClick, Consumer<Player> rightClick, ItemStack item, int slot) {
+    private final CustomGUI gui;
+
+    public GUIItem(CustomGUI gui, Consumer<Player> leftClick, Consumer<Player> rightClick, ItemStack item, int slot) {
+        this.gui = gui;
         this.leftClick = leftClick;
         this.rightClick = rightClick;
         this.item = item.clone();
@@ -69,14 +72,14 @@ public class GUIItem {
 
     public GUIItem makeGoBackwards() {
         setLeftClick((p) -> {
-            PluginCore.guiM.get(p).goBackwards();
+            gui.getCorePlugin().guiM.get(p).goBackwards();
         });
         return this;
     }
 
     public GUIItem makeGoForwards() {
         setLeftClick((p) -> {
-            PluginCore.guiM.get(p).goForward();
+            gui.getCorePlugin().guiM.get(p).goForward();
         });
         return this;
     }

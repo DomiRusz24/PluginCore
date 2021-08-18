@@ -41,15 +41,15 @@ public class CommandManager extends Manager implements TabExecutor {
 
             Field permList = PluginDescriptionFile.class.getDeclaredField("permissions");
             permList.setAccessible(true);
-            permList.set(PluginCore.plugin.getDescription(), new ArrayList<>());
-            PERMISSIONS_LIST = (List<Permission>) permList.get(PluginCore.plugin.getDescription());
+            permList.set(plugin.getDescription(), new ArrayList<>());
+            PERMISSIONS_LIST = (List<Permission>) permList.get(plugin.getDescription());
 
             PLUGIN_COMMAND_CONSTRUCTOR = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
             PLUGIN_COMMAND_CONSTRUCTOR.setAccessible(true);
         }catch (Exception e){
             e.printStackTrace();
         }
-        parentPermission = new Permission(PluginCore.plugin.getName() + ".command", PermissionDefault.OP);
+        parentPermission = new Permission(plugin.getName() + ".command", PermissionDefault.OP);
         PERMISSIONS_LIST.add(parentPermission);
     }
 
@@ -57,7 +57,7 @@ public class CommandManager extends Manager implements TabExecutor {
         COMMANDS.add(command);
         PluginCommand com = null;
         try {
-            com = PLUGIN_COMMAND_CONSTRUCTOR.newInstance(command.getName().toLowerCase(), PluginCore.plugin);
+            com = PLUGIN_COMMAND_CONSTRUCTOR.newInstance(command.getName().toLowerCase(), plugin);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
             return;
@@ -72,7 +72,7 @@ public class CommandManager extends Manager implements TabExecutor {
         com.setExecutor(this);
         com.setTabCompleter(this);
 
-        COMMAND_MAP.register(command.getName().toLowerCase(), PluginCore.plugin.getName(), com);
+        COMMAND_MAP.register(command.getName().toLowerCase(), plugin.getName(), com);
 
         Permission p1 = new Permission(command.getPermission(), command.getPermissionDefault() == null ? PermissionDefault.OP : command.getPermissionDefault());
         p1.addParent(parentPermission, true);

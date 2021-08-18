@@ -1,5 +1,6 @@
 package me.domirusz24.plugincore.core.team;
 
+import me.domirusz24.plugincore.PluginCore;
 import me.domirusz24.plugincore.core.placeholders.PlaceholderObject;
 import me.domirusz24.plugincore.core.players.AbstractPlayer;
 import me.domirusz24.plugincore.managers.PAPIManager;
@@ -14,9 +15,11 @@ public abstract class AbstractTeam<T extends PlaceholderObject> implements Place
     private final String name;
     protected final ArrayList<T> players;
     private final int size;
+    protected final PluginCore plugin;
 
 
-    public AbstractTeam(String name, int size) {
+    public AbstractTeam(PluginCore plugin, String name, int size) {
+        this.plugin = plugin;
         this.name = name;
         this.size = size;
         players = new ArrayList<>(size);
@@ -25,8 +28,13 @@ public abstract class AbstractTeam<T extends PlaceholderObject> implements Place
         }
     }
 
+    @Override
+    public PluginCore getCorePlugin() {
+        return plugin;
+    }
+
     public String getInfo() {
-        return PAPIManager.setPlaceholders(this, getSyntax());
+        return PAPIManager.setPlaceholders(plugin, this, getSyntax());
     }
 
     public String getName() {
@@ -136,7 +144,7 @@ public abstract class AbstractTeam<T extends PlaceholderObject> implements Place
                     }
                 } else {
                     index++;
-                    playerInfo.append(PAPIManager.setPlaceholders(object, getPlayerInfoSyntax().replaceAll("%row%", String.valueOf(index))));
+                    playerInfo.append(PAPIManager.setPlaceholders(plugin, object, getPlayerInfoSyntax().replaceAll("%row%", String.valueOf(index))));
                 }
             }
             return playerInfo.toString();

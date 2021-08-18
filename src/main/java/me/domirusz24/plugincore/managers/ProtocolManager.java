@@ -96,7 +96,7 @@ public class ProtocolManager extends Manager {
             protocolLib.sendServerPacket(player, packet.getHandle());
         } catch (Exception e) {
             e.printStackTrace();
-            PluginCore.plugin.log(Level.WARNING, "Failed packet teleporting player " + player.getName());
+            plugin.log(Level.WARNING, "Failed packet teleporting player " + player.getName());
         }
     }
 

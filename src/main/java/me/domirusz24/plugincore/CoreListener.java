@@ -8,6 +8,7 @@ import com.comphenix.protocol.events.PacketListener;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.projectkorra.projectkorra.ability.CoreAbility;
+import me.domirusz24.plugincore.core.PluginInstance;
 import me.domirusz24.plugincore.core.chatgui.ChatGUI;
 import me.domirusz24.plugincore.core.displayable.interfaces.LeftClickable;
 import me.domirusz24.plugincore.core.displayable.interfaces.RightClickable;
@@ -34,46 +35,50 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.*;
 
-public class CoreListener implements Listener {
+public class CoreListener implements Listener, PluginInstance {
 
-    private static int baseComponentIndex = -1;
+    private int baseComponentIndex = -1;
 
-    private static final HashSet<PerTick> PER_TICKABLE = new HashSet<>();
-    private static final HashSet<LeftClickable> LEFT_CLICKABLES = new HashSet<>();
-    private static final HashSet<RightClickable> RIGHT_CLICKABLES = new HashSet<>();
+    private final HashSet<PerTick> PER_TICKABLE = new HashSet<>();
+    private final HashSet<LeftClickable> LEFT_CLICKABLES = new HashSet<>();
+    private final HashSet<RightClickable> RIGHT_CLICKABLES = new HashSet<>();
 
-    public static void hookInListener(LeftClickable clickable) {
+    public void hookInListener(LeftClickable clickable) {
         LEFT_CLICKABLES.add(clickable);
     }
 
-    public static void hookInListener(RightClickable clickable) {
+    public void hookInListener(RightClickable clickable) {
         RIGHT_CLICKABLES.add(clickable);
     }
 
-    public static void hookInListener(PerTick tickable) {
+    public void hookInListener(PerTick tickable) {
         PER_TICKABLE.add(tickable);
     }
 
-    public static void removeListener(LeftClickable clickable) {
+    public void removeListener(LeftClickable clickable) {
         LEFT_CLICKABLES.remove(clickable);
     }
 
-    public static void removeListener(RightClickable clickable) {
+    public void removeListener(RightClickable clickable) {
         RIGHT_CLICKABLES.remove(clickable);
     }
 
-    public static void removeListener(PerTick tickable) {
+    public void removeListener(PerTick tickable) {
         PER_TICKABLE.remove(tickable);
     }
 
-    public CoreListener() {
-        Bukkit.getScheduler().runTaskTimer(PluginCore.plugin, () -> {
+    private final PluginCore plugin;
+
+    public CoreListener(PluginCore plugin) {
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             for (PerTick perTick : new ArrayList<>(PER_TICKABLE)) {
                 perTick.onTick();
             }
         }, 1, 1);
 
-        PluginCore.protocol.addPacketListener(new PacketListener() {
+        this.plugin = plugin;
+
+        plugin.protocol.addPacketListener(new PacketListener() {
             @Override
             public void onPacketSending(PacketEvent packetEvent) {
 
@@ -93,11 +98,11 @@ public class CoreListener implements Listener {
                     int x = map.getChunkX() * 16;
                     int z = map.getChunkZ() * 16;
                     Player player = packetEvent.getPlayer();
-                    Bukkit.getScheduler().runTask(PluginCore.plugin, () -> {
+                    Bukkit.getScheduler().runTask(plugin, () -> {
                         try {
-                            if (PluginCore.worldEditM.isAvailable(player.getLocation().getWorld().getChunkAt(new Location(player.getLocation().getWorld(), x, 10, z)), player)) {
-                                Bukkit.getScheduler().runTaskLater(PluginCore.plugin, () -> {
-                                    PluginCore.worldEditM.chunk(player.getLocation().getWorld().getChunkAt(new Location(player.getLocation().getWorld(), x, 10, z)), player);
+                            if (plugin.worldEditM.isAvailable(player.getLocation().getWorld().getChunkAt(new Location(player.getLocation().getWorld(), x, 10, z)), player)) {
+                                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                                    plugin.worldEditM.chunk(player.getLocation().getWorld().getChunkAt(new Location(player.getLocation().getWorld(), x, 10, z)), player);
                                 }, 10);
                             }
                         } catch (Throwable ignored){}
@@ -107,7 +112,7 @@ public class CoreListener implements Listener {
                     if (chat.getChatType().equals(EnumWrappers.ChatType.GAME_INFO)) {
                         //TODO: Maybe?
                     } else {
-                        ChatGUI panel = PluginCore.chatGuiM.getChatGUI(packetEvent.getPlayer());
+                        ChatGUI panel = plugin.chatGuiM.getChatGUI(packetEvent.getPlayer());
                         if (panel == null) {
                             return;
                         }
@@ -137,7 +142,7 @@ public class CoreListener implements Listener {
             @Override
             public void onPacketReceiving(PacketEvent packetEvent) {
                 if (packetEvent.getPacketType().equals(PacketType.Play.Client.SPECTATE)) {
-                    if (UtilMethods.IN_SPECTATOR.contains(packetEvent.getPlayer().getName())) {
+                    if (plugin.util.IN_SPECTATOR.contains(packetEvent.getPlayer().getName())) {
                         packetEvent.setCancelled(true);
                     }
                 } else if (packetEvent.getPacketType() == PacketType.Play.Client.POSITION || packetEvent.getPacketType() == PacketType.Play.Client.POSITION_LOOK) {
@@ -162,10 +167,10 @@ public class CoreListener implements Listener {
                         packetEvent.setCancelled(true);
                         return;
                     }
-                    ChatGUI panel = PluginCore.chatGuiM.getChatGUI(packetEvent.getPlayer());
+                    ChatGUI panel = plugin.chatGuiM.getChatGUI(packetEvent.getPlayer());
                     if (panel != null) {
                         WrapperPlayClientChat chat = new WrapperPlayClientChat(packetEvent.getPacket());
-                        Bukkit.getScheduler().runTask(PluginCore.plugin, () -> {
+                        Bukkit.getScheduler().runTask(plugin, () -> {
                             panel.onCommand(chat.getMessage());
                         });
                         packetEvent.setCancelled(true);
@@ -174,7 +179,7 @@ public class CoreListener implements Listener {
                     WrapperPlayClientUseEntity wrapper = new WrapperPlayClientUseEntity(packetEvent.getPacket());
                     if (wrapper.getType().equals(EnumWrappers.EntityUseAction.INTERACT_AT)) {
                         Location blockLocation = new Location(packetEvent.getPlayer().getWorld(), wrapper.getTargetVector().getX(), wrapper.getTargetVector().getY(), wrapper.getTargetVector().getZ());
-                        if (PluginCore.worldEditM.isAvailable(blockLocation.getChunk(), packetEvent.getPlayer())) {
+                        if (plugin.worldEditM.isAvailable(blockLocation.getChunk(), packetEvent.getPlayer())) {
                             packetEvent.setCancelled(true);
                         }
                     }
@@ -182,7 +187,7 @@ public class CoreListener implements Listener {
                     WrapperPlayClientBlockDig wrapper = new WrapperPlayClientBlockDig(packetEvent.getPacket());
                     if (wrapper.getStatus().equals(EnumWrappers.PlayerDigType.STOP_DESTROY_BLOCK)) {
                         Location blockLocation = new Location(packetEvent.getPlayer().getWorld(), wrapper.getLocation().getX(), wrapper.getLocation().getY(), wrapper.getLocation().getZ());
-                        if (PluginCore.worldEditM.isAvailable(blockLocation.getChunk(), packetEvent.getPlayer())) {
+                        if (plugin.worldEditM.isAvailable(blockLocation.getChunk(), packetEvent.getPlayer())) {
                             packetEvent.setCancelled(true);
                             packetEvent.getPlayer().sendBlockChange(blockLocation, blockLocation.getBlock().getBlockData());
                         }
@@ -202,25 +207,25 @@ public class CoreListener implements Listener {
 
             @Override
             public Plugin getPlugin() {
-                return PluginCore.plugin;
+                return plugin;
             }
         });
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        if (PluginCore.playerDataM.exists(event.getPlayer().getUniqueId())) {
-            PlayerData p = PluginCore.playerDataM.getPlayer(event.getPlayer().getName(), event.getPlayer().getUniqueId());
+        if (plugin.playerDataM.exists(event.getPlayer().getUniqueId())) {
+            PlayerData p = plugin.playerDataM.getPlayer(event.getPlayer().getName(), event.getPlayer().getUniqueId());
             if (p != null) {
                 p.onJoin();
             }
         } else {
-            PluginCore.playerDataM.getPlayer(event.getPlayer().getName(), event.getPlayer().getUniqueId());
+            plugin.playerDataM.getPlayer(event.getPlayer().getName(), event.getPlayer().getUniqueId());
         }
-        Map<Chunk, Set<Pair<String, Boolean>>> map = PluginCore.configM.getPhantomSchematics().getSchematics(event.getPlayer().getUniqueId());
+        Map<Chunk, Set<Pair<String, Boolean>>> map = plugin.configM.getPhantomSchematics().getSchematics(event.getPlayer().getUniqueId());
         for (Chunk chunk : map.keySet()) {
             for (Pair<String, Boolean> pair : map.get(chunk)) {
-                PluginCore.worldEditM.addPhantomBlocksNoConfig(chunk, event.getPlayer().getUniqueId(), pair.getKey(), pair.getValue());
+                plugin.worldEditM.addPhantomBlocksNoConfig(chunk, event.getPlayer().getUniqueId(), pair.getKey(), pair.getValue());
             }
         }
     }
@@ -234,7 +239,7 @@ public class CoreListener implements Listener {
         }
         ProtocolUtil.TELEPORT_LOCATION.remove(event.getPlayer().getEntityId());
         ProtocolUtil.FREEZE_LOCATION.remove(event.getPlayer());
-        PlayerData p = PluginCore.playerDataM.getPlayer(event.getPlayer().getName(), event.getPlayer().getUniqueId());
+        PlayerData p = plugin.playerDataM.getPlayer(event.getPlayer().getName(), event.getPlayer().getUniqueId());
         if (p != null) {
             p.onLeave();
         }
@@ -242,7 +247,7 @@ public class CoreListener implements Listener {
 
     @EventHandler
     public void onTeleport(PlayerTeleportEvent event) {
-        if (UtilMethods.IN_SPECTATOR.contains(event.getPlayer().getName())) {
+        if (plugin.util.IN_SPECTATOR.contains(event.getPlayer().getName())) {
             if (event.getCause() != PlayerTeleportEvent.TeleportCause.PLUGIN) {
                 event.setCancelled(true);
             }
@@ -273,5 +278,10 @@ public class CoreListener implements Listener {
                 p.onRightClick(event.getPlayer());
             }
         });
+    }
+
+    @Override
+    public PluginCore getCorePlugin() {
+        return plugin;
     }
 }

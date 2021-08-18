@@ -1,5 +1,6 @@
 package me.domirusz24.plugincore.command;
 
+import me.domirusz24.plugincore.PluginCore;
 import me.domirusz24.plugincore.command.abstractclasses.BaseSubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionDefault;
@@ -8,6 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SchematicLoadCommand extends BaseSubCommand {
+
+    private final PluginCore plugin;
+
+    public SchematicLoadCommand(PluginCore plugin) {
+        this.plugin = plugin;
+    }
+
     @Override
     protected void execute(CommandSender sender, List<String> args) {
 
@@ -36,5 +44,10 @@ public class SchematicLoadCommand extends BaseSubCommand {
     @Override
     public PermissionDefault getPermissionDefault() {
         return null;
+    }
+
+    @Override
+    public PluginCore getCorePlugin() {
+        return plugin;
     }
 }

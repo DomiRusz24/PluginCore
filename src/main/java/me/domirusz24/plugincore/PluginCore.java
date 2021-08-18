@@ -8,6 +8,7 @@ import me.domirusz24.plugincore.managers.*;
 import me.domirusz24.plugincore.managers.database.DataBaseManager;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import me.domirusz24.plugincore.managers.database.DataBaseTable;
+import me.domirusz24.plugincore.util.UtilMethods;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.permissions.Permission;
@@ -24,28 +25,29 @@ public abstract class PluginCore extends JavaPlugin {
 softdepend: [Multiverse-Core]
      */
 
-    // Plugin
-    public static PluginCore plugin;
+    public PluginCore plugin;
 
     // Dependencies
-    public static WorldEditPlugin worldEdit = null;
-    public static MultiverseCore multiverse = null;
-    public static ProtocolManager protocol = null;
+    public WorldEditPlugin worldEdit = null;
+    public MultiverseCore multiverse = null;
+    public ProtocolManager protocol = null;
 
 
     // Managers
-    public static DataBaseManager SqlM;
-    public static ConfigManager configM;
-    public static CommandManager commandM;
-    public static GUIManager guiM;
-    public static RegionManager regionM;
-    public static WorldEditManager worldEditM;
-    public static ChatGUIManager chatGuiM;
-    public static ScoreboardManager boardM;
-    public static me.domirusz24.plugincore.managers.ProtocolManager nmsM;
-    public static SignManager signM;
-    public static PAPIManager papiM;
-    public static PlayerDataManager playerDataM;
+    public DataBaseManager SqlM;
+    public ConfigManager configM;
+    public CommandManager commandM;
+    public GUIManager guiM;
+    public RegionManager regionM;
+    public WorldEditManager worldEditM;
+    public ChatGUIManager chatGuiM;
+    public ScoreboardManager boardM;
+    public me.domirusz24.plugincore.managers.ProtocolManager nmsM;
+    public SignManager signM;
+    public PAPIManager papiM;
+    public PlayerDataManager playerDataM;
+
+    public UtilMethods util;
 
     @Override
     public void onEnable() {
@@ -73,7 +75,7 @@ softdepend: [Multiverse-Core]
 
 
     // Plugin dependencies, everything external.
-    private void loadDependencies() {
+    protected void loadDependencies() {
         // WorldEdit
         worldEdit = (WorldEditPlugin) Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
 
@@ -113,7 +115,9 @@ softdepend: [Multiverse-Core]
 
     protected abstract PAPIManager papiManager();
 
-    private void loadManagers() {
+    protected void loadManagers() {
+
+        util = new UtilMethods(plugin);
 
         regionM = new RegionManager(plugin);
         // Config
@@ -157,9 +161,12 @@ softdepend: [Multiverse-Core]
 
     protected abstract void _loadCommands();
 
+    public CoreListener listener;
+
     // Spigot events
-    private void registerEvents() {
-        Bukkit.getPluginManager().registerEvents(new CoreListener(), this);
+    protected void registerEvents() {
+        listener = new CoreListener(plugin);
+        Bukkit.getPluginManager().registerEvents(listener, this);
         _registerEvents();
     }
 

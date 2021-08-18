@@ -45,10 +45,13 @@ public abstract class ChatGUI extends AbstractPlayer implements CompleteListener
 
     private List<BaseComponent> message = new ArrayList<>();
 
-    public ChatGUI(Player player) {
-        super(player);
+    private final PluginCore plugin;
+
+    public ChatGUI(PluginCore plugin, Player player) {
+        super(plugin, player);
+        this.plugin = plugin;
         registerListener();
-        PluginCore.chatGuiM.register(this);
+        plugin.chatGuiM.register(this);
     }
 
     public void addToCache(WrapperPlayServerChat chat) {
@@ -75,8 +78,8 @@ public abstract class ChatGUI extends AbstractPlayer implements CompleteListener
         reset();
         print(player);
         unregisterListener();
-        PluginCore.chatGuiM.unregister(this);
-        Bukkit.getScheduler().runTaskAsynchronously(PluginCore.plugin, () -> {
+        plugin.chatGuiM.unregister(this);
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             if (!player.isOnline()) return;
             for (WrapperPlayServerChat chat : chatCache) {
                 chat.sendPacket(player);
@@ -137,7 +140,7 @@ public abstract class ChatGUI extends AbstractPlayer implements CompleteListener
     }
 
     public void line(String prefix) {
-        addMessage(UtilMethods.translateColor(prefix) + LANG_LINE);
+        addMessage(plugin.util.translateColor(prefix) + LANG_LINE);
     }
 
     public ChatGUI newLine(int lines) {

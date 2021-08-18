@@ -8,6 +8,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class PlayerDataBaseTable extends DataBaseTable {
+    public PlayerDataBaseTable(DataBaseManager manager) {
+        super(manager);
+    }
+
     @Override
     public DataBaseValue<?>[] getValues() {
         List<DataBaseValue<?>> list = new ArrayList<>();

@@ -12,14 +12,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SchematicSaveCommand extends BaseSubCommand {
+
+    private final PluginCore plugin;
+
+    public SchematicSaveCommand(PluginCore plugin) {
+        this.plugin = plugin;
+    }
+
     @Override
     protected void execute(CommandSender sender, List<String> args) {
         if (isPlayer(sender) && correctLength(sender, args.size(), 1, 1)) {
-            Pair<Location, Location> selection = PluginCore.worldEditM.getPlayerSelection((Player) sender);
+            Pair<Location, Location> selection = plugin.worldEditM.getPlayerSelection((Player) sender);
             if (selection == null) {
                 sender.sendMessage(Languages.INCORRECT_SELECTION);
             } else {
-                PluginCore.worldEditM.saveSchematic(sender, selection.getKey(), selection.getValue(), args.get(0));
+                plugin.worldEditM.saveSchematic(sender, selection.getKey(), selection.getValue(), args.get(0));
                 sender.sendMessage(Languages.SUCCESS);
             }
         }
@@ -48,5 +55,10 @@ public class SchematicSaveCommand extends BaseSubCommand {
     @Override
     public PermissionDefault getPermissionDefault() {
         return null;
+    }
+
+    @Override
+    public PluginCore getCorePlugin() {
+        return plugin;
     }
 }

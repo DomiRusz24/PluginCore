@@ -29,12 +29,12 @@ public class CustomScoreboard extends PlayerDisplayable {
 
     private final Scoreboard scoreboard;
 
-    public CustomScoreboard(String name, String title) {
-        this(name, title, new PlaceholderObject[0]);
+    public CustomScoreboard(PluginCore plugin, String name, String title) {
+        this(plugin, name, title, new PlaceholderObject[0]);
     }
 
-    public CustomScoreboard(String name, String title, PlaceholderObject... objects) {
-        super(objects);
+    public CustomScoreboard(PluginCore plugin, String name, String title, PlaceholderObject... objects) {
+        super(plugin, objects);
         uuid = UUID.randomUUID().toString().substring(0, 6);
         this.scoreboard = Bukkit.getServer().getScoreboardManager().getNewScoreboard();
         this.name = name.substring(0, Math.min(name.length(), 16));
@@ -69,7 +69,7 @@ public class CustomScoreboard extends PlayerDisplayable {
     private void updateTitle() {
         String title = this.title;
         for (PlaceholderObject placeholder : getPlaceholders()) {
-            title = PAPIManager.setPlaceholders(placeholder, title);
+            title = PAPIManager.setPlaceholders(plugin, placeholder, title);
         }
         objective.setDisplayName(title);
     }
@@ -85,7 +85,7 @@ public class CustomScoreboard extends PlayerDisplayable {
     }
 
     protected String findColor(String prefix) {
-        return UtilMethods.findColor(prefix);
+        return plugin.util.findColor(prefix);
     }
 
     protected void reset() {
@@ -115,14 +115,14 @@ public class CustomScoreboard extends PlayerDisplayable {
 
     @Override
     protected boolean onPlayerAdd(Player player) {
-        PluginCore.boardM.put(player, this);
+        plugin.boardM.put(player, this);
         player.setScoreboard(scoreboard);
         return true;
     }
 
     @Override
     protected boolean onPlayerRemove(Player player) {
-        PluginCore.boardM.unregister(player);
+        plugin.boardM.unregister(player);
         player.setScoreboard(Bukkit.getServer().getScoreboardManager().getNewScoreboard());
         return true;
     }

@@ -27,8 +27,8 @@ public class PlayerGlide extends AbstractPlayer implements CompleteListener, Per
 
     private final boolean teleportToOrigin;
 
-    public PlayerGlide(Player player, Location start, Queue<GlideAction> glide, boolean teleportToOrigin) {
-        super(player);
+    public PlayerGlide(PluginCore plugin, Player player, Location start, Queue<GlideAction> glide, boolean teleportToOrigin) {
+        super(plugin, player);
         this.start = start.clone();
         this.teleportToOrigin = teleportToOrigin;
         glideLocations.add(new PlayerLoadAction(start, 60).run(player));

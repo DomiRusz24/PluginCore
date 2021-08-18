@@ -6,6 +6,7 @@ import com.mojang.authlib.properties.Property;
 import me.domirusz24.plugincore.PluginCore;
 import com.projectkorra.projectkorra.BendingPlayer;
 import me.domirusz24.plugincore.config.AbstractConfig;
+import me.domirusz24.plugincore.core.PluginInstance;
 import org.bukkit.*;
 import org.bukkit.boss.BarColor;
 import org.bukkit.enchantments.Enchantment;
@@ -33,17 +34,12 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class UtilMethods {
-
-    private static final Map<String, ItemStack> SKULL_CACHE = new HashMap<>();
-    private static final Map<String, ItemStack> TEXTURE_CACHE = new HashMap<>();
-
-    public static final Set<String> IN_SPECTATOR = new HashSet<>();
-
-    public static final Map<Character, Integer> FONT_SIZES;
-    public static final int DEFAULT_CHAR_WIDTH = 6;
-
-    static {
+public class UtilMethods implements PluginInstance {
+    
+    private PluginCore plugin;
+    
+    public UtilMethods(PluginCore plugin) {
+        this.plugin = plugin;
         FONT_SIZES = Stream.of(new Object[][]{
                 {' ', 4}, {'!', 2}, {'"', 5}, {'#', 6}, {'$', 6}, {'%', 6}, {'&', 6}, {'\'', 3},
                 {'(', 6}, {')', 6}, {'*', 5}, {'+', 6}, {',', 2}, {'-', 6}, {'.', 2}, {'/', 6},
@@ -58,7 +54,29 @@ public class UtilMethods {
                 {'p', 6}, {'q', 6}, {'r', 6}, {'s', 6}, {'t', 4}, {'u', 6}, {'v', 6}, {'w', 6},
                 {'x', 6}, {'y', 6}, {'z', 6}, {'{', 5}, {'|', 2}, {'}', 5}, {'~', 7}
         }).collect(Collectors.toMap(data -> (Character) data[0], data -> (Integer) data[1]));
+        SKULL_CACHE = new HashMap<>();
+        TEXTURE_CACHE = new HashMap<>();
     }
+
+    public UtilMethods(UtilMethods utilMethods) {
+        this.plugin = utilMethods.plugin;
+        FONT_SIZES = utilMethods.FONT_SIZES;
+        SKULL_CACHE = utilMethods.SKULL_CACHE;
+        TEXTURE_CACHE = utilMethods.TEXTURE_CACHE;
+    }
+
+    @Override
+    public PluginCore getCorePlugin() {
+        return plugin;
+    }
+
+    private final Map<String, ItemStack> SKULL_CACHE;
+    private final Map<String, ItemStack> TEXTURE_CACHE;
+
+    public static final Set<String> IN_SPECTATOR = new HashSet<>();
+
+    public final Map<Character, Integer> FONT_SIZES;
+    public static final int DEFAULT_CHAR_WIDTH = 6;
 
     public static void setSpectatorMode(Player player) {
         IN_SPECTATOR.add(player.getName());
@@ -149,7 +167,7 @@ public class UtilMethods {
         }
     }
 
-    public static ItemStack isInPlayerHeadCache(String name) {
+    public  ItemStack isInPlayerHeadCache(String name) {
         if (SKULL_CACHE.containsKey(name)) {
             return SKULL_CACHE.get(name).clone();
         } else {
@@ -157,7 +175,7 @@ public class UtilMethods {
         }
     }
 
-    public static void getPlayerHead(String name, Consumer<ItemStack> onComplete) {
+    public  void getPlayerHead(String name, Consumer<ItemStack> onComplete) {
         final ItemStack skull;
         if (SKULL_CACHE.containsKey(name)) {
             skull = SKULL_CACHE.get(name);
@@ -165,22 +183,22 @@ public class UtilMethods {
         } else {
             skull = new ItemStack(Material.PLAYER_HEAD);
             skull.setDurability((short) 3);
-            Bukkit.getScheduler().runTaskAsynchronously(PluginCore.plugin, () -> {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 try {
                     skull.setItemMeta(updateSkullMeta(name, (SkullMeta) skull.getItemMeta()));
-                    Bukkit.getScheduler().runTask(PluginCore.plugin, () -> {
+                    Bukkit.getScheduler().runTask(plugin, () -> {
                         SKULL_CACHE.put(name, skull);
                         onComplete.accept(skull.clone());
                     });
                 } catch (final IllegalArgumentException e) {
                     e.printStackTrace();
-                    PluginCore.plugin.log(Level.FINE, "Could not load skull for player " + name + "!");
+                    plugin.log(Level.FINE, "Could not load skull for player " + name + "!");
                 }
             });
         }
     }
 
-    public static void getTextureHead(String texture, Consumer<ItemStack> onComplete) {
+    public  void getTextureHead(String texture, Consumer<ItemStack> onComplete) {
         final ItemStack skull;
         texture = "http://textures.minecraft.net/texture/" + texture;
         if (TEXTURE_CACHE.containsKey(texture)) {
@@ -190,7 +208,7 @@ public class UtilMethods {
             skull = new ItemStack(Material.PLAYER_HEAD);
             skull.setDurability((short) 3);
             String finalTexture = texture;
-            Bukkit.getScheduler().runTaskAsynchronously(PluginCore.plugin, () -> {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 SkullMeta skullMeta = (SkullMeta)skull.getItemMeta();
                 GameProfile profile = new GameProfile(UUID.randomUUID(), null);
                 byte[] encodedData = Base64.getEncoder().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", finalTexture).getBytes());
@@ -213,7 +231,7 @@ public class UtilMethods {
                 }
                 skull.setItemMeta(skullMeta);
 
-                Bukkit.getScheduler().runTask(PluginCore.plugin, () -> {
+                Bukkit.getScheduler().runTask(plugin, () -> {
                     TEXTURE_CACHE.put(finalTexture, skull);
                     onComplete.accept(skull.clone());
                 });
@@ -244,7 +262,7 @@ public class UtilMethods {
         return ChatColor.translateAlternateColorCodes('&', string.replaceAll("\\Q|\\E\\Q|\\E", "\n&r"));
     }
 
-    public static String[] wordWrap(final String rawString, final int lineLength, final String wrapPrefix) {
+    public String[] wordWrap(final String rawString, final int lineLength, final String wrapPrefix) {
         // A null string is a single line
         if (rawString == null) {
             return new String[]{""};
@@ -342,7 +360,7 @@ public class UtilMethods {
         return lines.toArray(new String[0]);
     }
 
-    public static int getWidth(final String input) {
+    public int getWidth(final String input) {
         int ret = 0;
         final char[] rawChars = input.toCharArray();
 
@@ -356,7 +374,7 @@ public class UtilMethods {
         return ret;
     }
 
-    public static int getWidth(final Character character) {
+    public int getWidth(final Character character) {
         return FONT_SIZES.getOrDefault(character, DEFAULT_CHAR_WIDTH);
     }
 
@@ -432,8 +450,8 @@ public class UtilMethods {
 
 
     // Outputs all classes in com.PluginCore, really useful for annotations!
-    public static List<Class<?>> findClasses() {
-        List<Class<?>> classes = findClasses(PluginCore.plugin.packageName());
+    public List<Class<?>> findClasses() {
+        List<Class<?>> classes = findClasses(plugin.packageName());
         if (classes == null) {
             classes = new ArrayList<>();
         }
@@ -441,8 +459,8 @@ public class UtilMethods {
         return classes;
     }
 
-    public static List<Class<?>> findClasses(String path) {
-        JavaPlugin plugin = PluginCore.plugin;
+    public List<Class<?>> findClasses(String path) {
+        JavaPlugin plugin = this.plugin;
         ClassLoader loader = plugin.getClass().getClassLoader();
         path = path.replace('.', '/');
         JarFile jar = null;
@@ -566,17 +584,17 @@ public class UtilMethods {
         if (desc.length != 0) meta.setLore(Arrays.asList(desc));
         meta.setUnbreakable(true);
         if (glow) {
-            meta.addEnchant(Enchantment.LUCK, 1, false);
+            meta.addEnchant(Enchantment.DURABILITY, 1, false);
         }
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
         is.setItemMeta(meta);
         return is;
     }
 
-    public static void sendToAllPlayers(PacketContainer packetContainer) {
+    public void sendToAllPlayers(PacketContainer packetContainer) {
         Bukkit.getOnlinePlayers().forEach((p) -> {
             try {
-                PluginCore.protocol.sendServerPacket(p, packetContainer);
+                plugin.protocol.sendServerPacket(p, packetContainer);
             } catch (InvocationTargetException e) {
                 e.printStackTrace();
             }

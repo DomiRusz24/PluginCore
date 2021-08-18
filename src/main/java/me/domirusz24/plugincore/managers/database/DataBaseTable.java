@@ -19,8 +19,8 @@ public abstract class DataBaseTable {
 
     private final DataBaseValue<?>[] values;
 
-    public DataBaseTable() {
-        this.manager = PluginCore.SqlM;
+    public DataBaseTable(DataBaseManager manager) {
+        this.manager = manager;
         this.index = getIndex();
         this.values = getValues();
     }

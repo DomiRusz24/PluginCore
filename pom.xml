@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>me.domirusz24.plugincore</groupId>
-    <artifactId>PluginCore-PH</artifactId>
-    <version>1.0</version>
+    <artifactId>PluginCore-NEW</artifactId>
+    <version>2.0</version>
     <packaging>jar</packaging>
 
     <name>PluginCore</name>

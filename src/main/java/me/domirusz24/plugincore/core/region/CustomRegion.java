@@ -22,9 +22,9 @@ public abstract class CustomRegion {
 
     private boolean enabled = true;
 
-    public CustomRegion(String ID) {
+    public CustomRegion(PluginCore plugin, String ID) {
         this.ID = ID;
-        PluginCore.regionM.addRegion(this);
+        plugin.regionM.addRegion(this);
     }
 
     protected abstract void onPlayerEnter(Player player);

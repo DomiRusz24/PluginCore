@@ -1,5 +1,6 @@
 package me.domirusz24.plugincore.command;
 
+import me.domirusz24.plugincore.PluginCore;
 import me.domirusz24.plugincore.command.abstractclasses.BaseSubCommand;
 import me.domirusz24.plugincore.core.players.glide.GlideAction;
 import me.domirusz24.plugincore.util.UtilMethods;
@@ -13,6 +14,13 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GlideActionCommand extends BaseSubCommand {
+
+    private final PluginCore plugin;
+
+    public GlideActionCommand(PluginCore plugin) {
+        this.plugin = plugin;
+    }
+
     @Override
     protected void execute(CommandSender sender, List<String> args) {
         if (!isPlayer(sender)) return;
@@ -52,5 +60,9 @@ public class GlideActionCommand extends BaseSubCommand {
     @Override
     public PermissionDefault getPermissionDefault() {
         return null;
+    }
+    @Override
+    public PluginCore getCorePlugin() {
+        return plugin;
     }
 }

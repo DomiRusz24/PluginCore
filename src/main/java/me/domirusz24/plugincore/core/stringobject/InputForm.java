@@ -1,5 +1,6 @@
 package me.domirusz24.plugincore.core.stringobject;
 
+import me.domirusz24.plugincore.PluginCore;
 import me.domirusz24.plugincore.config.annotations.Language;
 import me.domirusz24.plugincore.core.players.AbstractPlayer;
 import me.domirusz24.plugincore.util.CompleteListener;
@@ -31,8 +32,8 @@ public class InputForm extends AbstractPlayer implements CompleteListener {
 
     private int index = 0;
 
-    private InputForm(Player player, String name, Consumer<Object[]> onComplete, StringObject<?>... args) {
-        super(player);
+    private InputForm(PluginCore plugin, Player player, String name, Consumer<Object[]> onComplete, StringObject<?>... args) {
+        super(plugin, player);
         this.onComplete = onComplete;
         this.name = name;
         this.player = player;
@@ -130,6 +131,13 @@ public class InputForm extends AbstractPlayer implements CompleteListener {
         private StringObject<?>[] args;
         private Consumer<Object[]> onComplete;
 
+        private PluginCore plugin;
+
+        public Builder setPlugin(PluginCore plugin) {
+            this.plugin = plugin;
+            return this;
+        }
+
         public Builder setName(String name) {
             this.name = name;
             return this;
@@ -154,7 +162,7 @@ public class InputForm extends AbstractPlayer implements CompleteListener {
         }
 
         public InputForm create(Player player) {
-            return new InputForm(player, name, getOnComplete(), getArgs());
+            return new InputForm(plugin, player, name, getOnComplete(), getArgs());
         }
     }
 

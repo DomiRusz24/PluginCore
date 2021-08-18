@@ -2,6 +2,7 @@ package me.domirusz24.plugincore.core.displayable;
 
 
 
+import me.domirusz24.plugincore.PluginCore;
 import me.domirusz24.plugincore.core.placeholders.PlaceholderObject;
 import me.domirusz24.plugincore.managers.PAPIManager;
 
@@ -13,8 +14,11 @@ import java.util.function.Supplier;
 
 public abstract class Displayable {
 
-    public Displayable(PlaceholderObject... placeholders) {
+    public final PluginCore plugin;
+
+    public Displayable(PluginCore pluginCore, PlaceholderObject... placeholders) {
         this.placeholders.addAll(Arrays.asList(placeholders));
+        this.plugin = pluginCore;
     }
 
     private int size = 100;
@@ -41,7 +45,7 @@ public abstract class Displayable {
         for (Integer i : values.keySet()) {
             String s = values.get(i).get();
             for (PlaceholderObject object : placeholders) {
-                s = PAPIManager.setPlaceholders(object, s);
+                s = PAPIManager.setPlaceholders(plugin, object, s);
             }
             tempValues.set(i, s);
         }

@@ -1,5 +1,6 @@
 package me.domirusz24.plugincore.core.displayable;
 
+import me.domirusz24.plugincore.PluginCore;
 import me.domirusz24.plugincore.core.placeholders.PlaceholderObject;
 import org.bukkit.entity.Player;
 
@@ -10,9 +11,10 @@ public abstract class PlayerDisplayable extends Displayable {
 
     private final List<Player> players = new ArrayList<>();
 
-    public PlayerDisplayable(PlaceholderObject... placeholders) {
-        super(placeholders);
+    public PlayerDisplayable(PluginCore pluginCore, PlaceholderObject... placeholders) {
+        super(pluginCore, placeholders);
     }
+
 
     public void addPlayer(Player player) {
         if (!players.contains(player)) {

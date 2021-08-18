@@ -56,11 +56,15 @@ public abstract class PAPIManager extends PlaceholderExpansion {
 
     // setting PlaceHolders
 
-    public static String setPlaceholders(PlaceholderObject object, String text) {
+    public static String setPlaceholders(PluginCore plugin, PlaceholderObject object, String text) {
+        return plugin.papiM.setPlaceholders(object, text);
+    }
+
+    public String setPlaceholders(PlaceholderObject object, String text) {
         if (text == null) {
             return null;
         } else {
-            if (object.placeHolderPrefix().equals(PluginCore.plugin.getName().toLowerCase())) {
+            if (object.placeHolderPrefix().equals(plugin.getName().toLowerCase())) {
                 text = object.onPlaceholderRequest(text);
             } else {
                 Matcher m = PlaceholderAPI.getPlaceholderPattern().matcher(text);

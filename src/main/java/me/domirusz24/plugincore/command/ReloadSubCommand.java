@@ -13,12 +13,18 @@ import java.util.List;
 
 public class ReloadSubCommand extends BaseSubCommand {
 
+    private final PluginCore plugin;
+
+    public ReloadSubCommand(PluginCore plugin) {
+        this.plugin = plugin;
+    }
+
     @Language("Command.Reload.Description")
     public static String LANG_DESCRIPTION = "Allows you to reload the configs";
 
     @Override
     protected void execute(CommandSender sender, List<String> args) {
-        if (PluginCore.configM.reloadConfigs()) {
+        if (plugin.configM.reloadConfigs()) {
             sender.sendMessage(ChatColor.GREEN + "Success!");
         } else {
             sender.sendMessage(ChatColor.RED + "Failure!");
@@ -48,5 +54,10 @@ public class ReloadSubCommand extends BaseSubCommand {
     @Override
     public PermissionDefault getPermissionDefault() {
         return null;
+    }
+
+    @Override
+    public PluginCore getCorePlugin() {
+        return plugin;
     }
 }

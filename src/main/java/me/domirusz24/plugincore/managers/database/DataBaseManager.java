@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Level;
 
-import static me.domirusz24.plugincore.PluginCore.configM;
-
 public class DataBaseManager extends Manager {
 
     public final ConcurrentLinkedQueue<Runnable> sqlQueue = new ConcurrentLinkedQueue<>();
@@ -44,15 +42,15 @@ public class DataBaseManager extends Manager {
 
 
     public void OnEnable() {
-        configM.getConfig().addDefault("databasetype", "sqlite");
-        configM.getConfig().addDefault("table-prefix", tablePrefix);
-        configM.getConfig().addDefault("mysql.host", "localhost");
-        configM.getConfig().addDefault("mysql.user", "root");
-        configM.getConfig().addDefault("mysql.password", "1234");
-        configM.getConfig().addDefault("mysql.database", "minecraft");
-        configM.getConfig().addDefault("mysql.port", "3306");
+        plugin.plugin.configM.getConfig().addDefault("databasetype", "sqlite");
+        plugin.configM.getConfig().addDefault("table-prefix", tablePrefix);
+        plugin.configM.getConfig().addDefault("mysql.host", "localhost");
+        plugin.configM.getConfig().addDefault("mysql.user", "root");
+        plugin.configM.getConfig().addDefault("mysql.password", "1234");
+        plugin.configM.getConfig().addDefault("mysql.database", "minecraft");
+        plugin.configM.getConfig().addDefault("mysql.port", "3306");
 
-        configM.getConfig().save();
+        plugin.configM.getConfig().save();
 
         if (this.plugin.getConfig().contains("databasetype") &&
                 this.plugin.getConfig().getString("databasetype").equalsIgnoreCase("mysql")) {
@@ -189,7 +187,7 @@ public class DataBaseManager extends Manager {
 
                 Statement sql = DataBaseManager.this.connection.createStatement();
 
-                for (DataBaseTable table : PluginCore.plugin.getTables()) {
+                for (DataBaseTable table : plugin.getTables()) {
                     sql.addBatch(table.initTable());
                 }
 

@@ -1,7 +1,6 @@
 package me.domirusz24.plugincore.core.gui;
 
 import me.domirusz24.plugincore.PluginCore;
-import me.domirusz24.plugincore.core.gui.shortcut.EmptyItem;
 import me.domirusz24.plugincore.managers.GUIManager;
 import me.domirusz24.plugincore.util.CompleteListener;
 import me.domirusz24.plugincore.util.UtilMethods;
@@ -32,13 +31,16 @@ public abstract class CustomGUI implements CompleteListener {
 
     private HashMap<Integer, GUIItem> items = new HashMap<>();
 
-    private ArrayList<Player> viewers = new ArrayList<>();
+    private ArrayList<UUID> viewers = new ArrayList<>();
 
     private final ItemStack emptySlot;
 
     private int size;
 
-    public CustomGUI(String name, int size) {
+    private final PluginCore plugin;
+
+    public CustomGUI(PluginCore plugin, String name, int size) {
+        this.plugin = plugin;
         inventory = Bukkit.createInventory(null, size, name);
         this.name = name;
         this.size = size;
@@ -46,7 +48,8 @@ public abstract class CustomGUI implements CompleteListener {
         registerListener();
     }
 
-    public CustomGUI(String name, InventoryType type) {
+    public CustomGUI(PluginCore plugin, String name, InventoryType type) {
+        this.plugin = plugin;
         inventory = Bukkit.createInventory(null, type, name);
         this.emptySlot = emptySlot();
         this.name = name;
@@ -74,12 +77,12 @@ public abstract class CustomGUI implements CompleteListener {
         items.clear();
         if (emptySlot != null) {
             for (int i = 0; i < inventory.getSize(); i++) {
-                registerItem(new EmptyItem(emptySlot, i));
+                registerItem(new GUIItem(this, (p) -> {}, (p) -> {}, emptySlot, i));
             }
         } else {
             ItemStack air = new ItemStack(Material.AIR, 1);
             for (int i = 0; i < inventory.getSize(); i++) {
-                registerItem(new EmptyItem(air, i));
+                registerItem(new GUIItem(this, (p) -> {}, (p) -> {}, air, i));
             }
         }
         onClear();
@@ -96,8 +99,8 @@ public abstract class CustomGUI implements CompleteListener {
         this.size = size;
         Inventory newInventory = Bukkit.createInventory(null, size, name);
         invChange = true;
-        for (Player p : new ArrayList<>(getViewers())) {
-            p.openInventory(newInventory);
+        for (UUID p : new ArrayList<>(getViewers())) {
+            Bukkit.getPlayer(p).openInventory(newInventory);
         }
         invChange = false;
         inventory = newInventory;
@@ -112,10 +115,10 @@ public abstract class CustomGUI implements CompleteListener {
         if (!Bukkit.isPrimaryThread()) {
             throw new IllegalStateException("Must be called sync!");
         }
-        if (!viewers.contains(player)) {
+        if (!viewers.contains(player.getUniqueId())) {
             silent.add(player.getUniqueId());
-            viewers.add(player);
-            GUIManager.PlayerGUIData guiData = PluginCore.guiM.get(player);
+            viewers.add(player.getUniqueId());
+            GUIManager.PlayerGUIData guiData = plugin.guiM.get(player);
             if (guiData.getCurrent() == null) {
                 if (addToGUIs) {
                     guiData.addNew(this);
@@ -153,7 +156,8 @@ public abstract class CustomGUI implements CompleteListener {
             throw new IllegalStateException("Must be called sync!");
         }
         if (!silent.contains(player.getUniqueId())) {
-            GUIManager.PlayerGUIData guiData = PluginCore.guiM.get(player);
+            viewers.remove(player.getUniqueId());
+            GUIManager.PlayerGUIData guiData = plugin.guiM.get(player);
             guiData.closeAll();
             if (close) {
                 player.closeInventory();
@@ -167,7 +171,7 @@ public abstract class CustomGUI implements CompleteListener {
         }
         if (silent.contains(player.getUniqueId())) {
             removePlayer(player);
-        } else if (viewers.contains(player)) {
+        } else if (viewers.contains(player.getUniqueId())) {
             player.closeInventory();
         }
     }
@@ -178,7 +182,7 @@ public abstract class CustomGUI implements CompleteListener {
         if (!Bukkit.isPrimaryThread()) {
             throw new IllegalStateException("Must be called sync!");
         }
-        if (!silent.contains(player.getUniqueId()) && viewers.contains(player)) {
+        if (!silent.contains(player.getUniqueId()) && viewers.contains(player.getUniqueId())) {
             silent.add(player.getUniqueId());
             player.closeInventory();
         }
@@ -188,7 +192,7 @@ public abstract class CustomGUI implements CompleteListener {
         if (!Bukkit.isPrimaryThread()) {
             throw new IllegalStateException("Must be called sync!");
         }
-        viewers.remove(player);
+        viewers.remove(player.getUniqueId());
         silent.remove(player.getUniqueId());
         close(player);
     }
@@ -198,7 +202,7 @@ public abstract class CustomGUI implements CompleteListener {
         if (!Bukkit.isPrimaryThread()) {
             throw new IllegalStateException("Must be called sync!");
         }
-        viewers.remove(player);
+        viewers.remove(player.getUniqueId());
         changeGUI(player);
     }
 
@@ -207,7 +211,7 @@ public abstract class CustomGUI implements CompleteListener {
     }
 
     public ItemStack createItem(Material type, byte data, String name, boolean glow, String... desc) {
-        return UtilMethods.createItem(type, data, name, glow, desc);
+        return plugin.util.createItem(type, data, name, glow, desc);
     }
 
     public void onLeftClick(Player player, int slot) {
@@ -233,7 +237,7 @@ public abstract class CustomGUI implements CompleteListener {
             return items.get(slot);
         } else {
             if (emptySlot == null) return null;
-            GUIItem item = new EmptyItem(emptySlot, slot);
+            GUIItem item = new GUIItem(this, (p) -> {}, (p) -> {}, emptySlot, slot);
             registerItem(item);
             return item;
         }
@@ -248,14 +252,14 @@ public abstract class CustomGUI implements CompleteListener {
             throw new IllegalStateException("Must be called sync!");
         }
        unregisterListener();
-        for (Player viewer : viewers) {
-            viewer.closeInventory();
+        for (UUID viewer : viewers) {
+            Bukkit.getPlayer(viewer).closeInventory();
         }
         viewers.clear();
         inventory.clear();
     }
 
-    public ArrayList<Player> getViewers() {
+    public ArrayList<UUID> getViewers() {
         return viewers;
     }
 
@@ -294,23 +298,25 @@ public abstract class CustomGUI implements CompleteListener {
 
     @EventHandler(ignoreCancelled = true)
     public void onItemMove(InventoryDragEvent event) {
-        if (!getViewers().contains((Player) event.getWhoClicked())) return;
+        if (!getViewers().contains(event.getWhoClicked().getUniqueId())) return;
         event.setCancelled(true);
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onItemClick(InventoryClickEvent event) {
-        if (!getViewers().contains((Player) event.getWhoClicked())) return;
+        if (!getViewers().contains(event.getWhoClicked().getUniqueId())) return;
             event.setCancelled(true);
-            if (event.isLeftClick()) onLeftClick((Player) event.getWhoClicked(), event.getSlot());
-            if (event.isRightClick()) onRightClick((Player) event.getWhoClicked(), event.getSlot());
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                if (event.isLeftClick()) onLeftClick((Player) event.getWhoClicked(), event.getSlot());
+                if (event.isRightClick()) onRightClick((Player) event.getWhoClicked(), event.getSlot());
+            });
     }
 
     @EventHandler
     public void onInventoryLeave(InventoryCloseEvent event) {
-        if (!getViewers().contains((Player) event.getPlayer())) return;
+        if (!getViewers().contains(event.getPlayer().getUniqueId())) return;
         if (!invChange && !silent.contains(event.getPlayer().getUniqueId())) {
-            Bukkit.getScheduler().runTask(PluginCore.plugin, () -> {
+            Bukkit.getScheduler().runTask(plugin, () -> {
                 removePlayer((Player) event.getPlayer(), false);
             });
         }

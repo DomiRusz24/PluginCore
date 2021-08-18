@@ -2,6 +2,7 @@ package me.domirusz24.plugincore.core.displayable;
 
 
 import me.domirusz24.plugincore.CoreListener;
+import me.domirusz24.plugincore.PluginCore;
 import me.domirusz24.plugincore.core.displayable.interfaces.ClickableItem;
 import me.domirusz24.plugincore.core.displayable.interfaces.LeftClickable;
 import me.domirusz24.plugincore.core.displayable.interfaces.RightClickable;
@@ -16,12 +17,15 @@ public class ClickableItemStack implements ClickableItem {
 
     protected ItemStack item;
 
-    public ClickableItemStack(Consumer<Player> leftClick, Consumer<Player> rightClick, ItemStack item) {
+    private final PluginCore plugin;
+
+    public ClickableItemStack(PluginCore plugin, Consumer<Player> leftClick, Consumer<Player> rightClick, ItemStack item) {
+        this.plugin = plugin;
         this.leftClick = leftClick;
         this.rightClick = rightClick;
         this.item = item;
-        CoreListener.hookInListener((LeftClickable) this);
-        CoreListener.hookInListener((RightClickable) this);
+        plugin.listener.hookInListener((LeftClickable) this);
+        plugin.listener.hookInListener((RightClickable) this);
     }
 
     public void giveToPlayer(Player player, int amount) {
@@ -37,8 +41,8 @@ public class ClickableItemStack implements ClickableItem {
     }
 
     public void unregister() {
-        CoreListener.removeListener((LeftClickable) this);
-        CoreListener.removeListener((RightClickable) this);
+        plugin.listener.removeListener((LeftClickable) this);
+        plugin.listener.removeListener((RightClickable) this);
     }
 
     @Override
@@ -54,5 +58,10 @@ public class ClickableItemStack implements ClickableItem {
     @Override
     public void onRightClick(Player player) {
         rightClick.accept(player);
+    }
+
+    @Override
+    public PluginCore getCorePlugin() {
+        return plugin;
     }
 }

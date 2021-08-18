@@ -14,6 +14,6 @@ public interface PlaceholderPlayer extends PlaceholderObject {
 
     @Override
     default String placeHolderPrefix() {
-        return PluginCore.plugin.getName().toLowerCase();
+        return getCorePlugin().getName().toLowerCase();
     }
 }

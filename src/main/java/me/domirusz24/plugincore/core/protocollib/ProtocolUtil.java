@@ -1,5 +1,8 @@
 package me.domirusz24.plugincore.core.protocollib;
 
+import com.comphenix.protocol.ProtocolLib;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import me.domirusz24.plugincore.PluginCore;
 import me.domirusz24.plugincore.core.protocollib.wrappers.WrapperPlayServerEntityTeleport;
 import me.domirusz24.plugincore.core.protocollib.wrappers.WrapperPlayerServerGameStateChange;
@@ -55,7 +58,7 @@ public class ProtocolUtil {
         player.setGameMode(gameMode);
     }
 
-    public static void teleport(int entityId, Location location, Player... receivers) {
+    public static void teleport(ProtocolManager manager, int entityId, Location location, Player... receivers) {
         WrapperPlayServerEntityTeleport teleport = new WrapperPlayServerEntityTeleport();
         teleport.setEntityID(entityId);
         teleport.setX(location.getX());
@@ -66,7 +69,7 @@ public class ProtocolUtil {
         teleport.setOnGround(false);
         try {
             for (Player receiver : receivers) {
-                PluginCore.protocol.sendServerPacket(receiver, teleport.getHandle());
+                manager.sendServerPacket(receiver, teleport.getHandle());
             }
         } catch (InvocationTargetException e) {
             e.printStackTrace();

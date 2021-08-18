@@ -12,13 +12,19 @@ import java.util.List;
 
 public class ChatGUILeaveCommand extends BaseSubCommand {
 
+    private final PluginCore plugin;
+
+    public ChatGUILeaveCommand(PluginCore plugin) {
+        this.plugin = plugin;
+    }
+
     @Language("Command.Panel.Description")
     public static String LANG_DESCRIPTION = "Panel control";
 
     @Override
     protected void execute(CommandSender sender, List<String> args) {
         if (isPlayer(sender)) {
-            ChatGUI gui = PluginCore.chatGuiM.getChatGUI((Player) sender);
+            ChatGUI gui = plugin.chatGuiM.getChatGUI((Player) sender);
             if (gui != null) {
                 gui.unregister();
             }
@@ -48,5 +54,10 @@ public class ChatGUILeaveCommand extends BaseSubCommand {
     @Override
     public PermissionDefault getPermissionDefault() {
         return PermissionDefault.TRUE;
+    }
+
+    @Override
+    public PluginCore getCorePlugin() {
+        return plugin;
     }
 }

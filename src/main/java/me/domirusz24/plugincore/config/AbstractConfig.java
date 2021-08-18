@@ -1,7 +1,9 @@
 package me.domirusz24.plugincore.config;
 
+import com.onarandombox.MultiverseCore.MultiverseCore;
 import me.domirusz24.plugincore.config.configvalue.AbstractConfigValue;
 import me.domirusz24.plugincore.PluginCore;
+import me.domirusz24.plugincore.core.PluginInstance;
 import me.domirusz24.plugincore.core.displayable.CustomSign;
 import me.domirusz24.plugincore.core.region.CustomRegion;
 import me.domirusz24.plugincore.managers.ConfigManager;
@@ -20,15 +22,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
-public abstract class AbstractConfig extends YamlConfiguration {
+public abstract class AbstractConfig extends YamlConfiguration implements PluginInstance {
 
     private File file;
 
     private final String name;
 
-    private final PluginCore plugin;
+    protected final PluginCore plugin;
 
-    private final ConfigManager manager;
+    protected final ConfigManager manager;
 
     private final ArrayList<AbstractConfigValue<?>> values = new ArrayList<>();
 
@@ -41,15 +43,15 @@ public abstract class AbstractConfig extends YamlConfiguration {
     }
 
     public AbstractConfig(String path, PluginCore plugin, ConfigManager manager) {
-        this(new File(PluginCore.plugin.getDataFolder(), path), plugin, manager);
+        this(new File(plugin.getDataFolder(), path), plugin, manager);
     }
 
     public AbstractConfig(String path, PluginCore plugin) {
-        this(new File(PluginCore.plugin.getDataFolder(), path), plugin);
+        this(new File(plugin.getDataFolder(), path), plugin);
     }
 
     public AbstractConfig(File file, PluginCore plugin) {
-        this(file, plugin, PluginCore.configM);
+        this(file, plugin, plugin.configM);
     }
 
     public void addValue(AbstractConfigValue<?> value) {
@@ -163,9 +165,9 @@ public abstract class AbstractConfig extends YamlConfiguration {
     }
 
     public CustomSign getSign(String path, String ID) {
-        CustomSign sign = PluginCore.signM.getSign(ID);
+        CustomSign sign = plugin.signM.getSign(ID);
         if (sign == null) {
-            sign = new CustomSign(ID);
+            sign = new CustomSign(plugin, ID);
             Location location = getLocation(path);
             if (location != null) {
                 Block block = location.getBlock();
@@ -236,9 +238,9 @@ public abstract class AbstractConfig extends YamlConfiguration {
 
     public static World getWorld(String name) {
         World world = Bukkit.getWorld(name);
-        if (world == null && PluginCore.multiverse != null) {
+        if (world == null && Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) {
             try {
-                world = PluginCore.multiverse.getMVWorldManager().getMVWorld(name).getCBWorld();
+                world = ((MultiverseCore) Bukkit.getPluginManager().getPlugin("Multiverse-Core")).getMVWorldManager().getMVWorld(name).getCBWorld();
             } catch (NullPointerException e) {
                 return null;
             }
@@ -250,7 +252,10 @@ public abstract class AbstractConfig extends YamlConfiguration {
         return file;
     }
 
-    public PluginCore getPlugin() {
+
+
+    @Override
+    public PluginCore getCorePlugin() {
         return plugin;
     }
 }

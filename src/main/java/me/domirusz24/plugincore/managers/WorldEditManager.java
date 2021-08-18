@@ -23,7 +23,6 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import me.domirusz24.plugincore.PluginCore;
 import me.domirusz24.plugincore.command.Languages;
 import me.domirusz24.plugincore.util.Pair;
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -39,12 +38,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class WorldEditManager extends Manager {
-    private final WorldEditPlugin plugin;
+    private final WorldEditPlugin worldEditPlugin;
 
     private final HashMap<Chunk, HashMap<UUID, Set<Pair<String, Boolean>>>> SCHEDULED_PHANTOM_BLOCKS = new HashMap<>();
 
-    public static List<String> getSchemtatics() {
-        File folder = new File(PluginCore.plugin.getDataFolder(), "/schematics/");
+    public List<String> getSchemtatics() {
+        File folder = new File(plugin.getDataFolder(), "/schematics/");
         if (folder.listFiles() == null) return new ArrayList<>();
         return Arrays.stream(folder.listFiles()).map(File::getName).collect(Collectors.toList());
     }
@@ -52,12 +51,12 @@ public class WorldEditManager extends Manager {
 
     public WorldEditManager(PluginCore plugin, WorldEditPlugin worldEdit) {
         super(plugin);
-        this.plugin = worldEdit;
+        this.worldEditPlugin = worldEdit;
     }
 
     public Pair<Location, Location> getPlayerSelection(Player player) {
         try {
-            Region region = plugin.getSession(player).getSelection(plugin.getSession(player).getSelectionWorld());
+            Region region = worldEditPlugin.getSession(player).getSelection(worldEditPlugin.getSession(player).getSelectionWorld());
             BlockVector3 min = region.getMinimumPoint();
             BlockVector3 max = region.getMaximumPoint();
             return new Pair<>(new Location(BukkitAdapter.adapt(region.getWorld()), min.getBlockX(), min.getBlockY(), min.getBlockZ()), new Location(BukkitAdapter.adapt(region.getWorld()), max.getBlockX(), max.getBlockY(), max.getBlockZ()));
@@ -106,11 +105,11 @@ public class WorldEditManager extends Manager {
     }
 
     public void saveSchematic(CommandSender sender, Location min, Location max, String name) {
-        name = PluginCore.configM.getSchematicConfig().getNonDuplicateId(name);
+        name = plugin.configM.getSchematicConfig().getNonDuplicateId(name);
 
-        File folder = new File(PluginCore.plugin.getDataFolder(), "/schematics/");
+        File folder = new File(plugin.getDataFolder(), "/schematics/");
 
-        PluginCore.configM.getSchematicConfig().setMin(name, min);
+        plugin.configM.getSchematicConfig().setMin(name, min);
 
         saveSchematic(sender, min, max, folder, name);
     }
@@ -139,10 +138,10 @@ public class WorldEditManager extends Manager {
     }
 
     public boolean getSchematic(CommandSender sender, String name) {
-        Location min = PluginCore.configM.getSchematicConfig().getMin(name);
+        Location min = plugin.configM.getSchematicConfig().getMin(name);
         if (min == null) return false;
 
-        File folder = new File(PluginCore.plugin.getDataFolder(), "/schematics/");
+        File folder = new File(plugin.getDataFolder(), "/schematics/");
 
         return getSchematic(sender, min, folder, name);
     }
@@ -158,10 +157,10 @@ public class WorldEditManager extends Manager {
     }
 
     private boolean showPhantomSchematic(Player player, String name, boolean autoRemove, boolean save) {
-        Location min = PluginCore.configM.getSchematicConfig().getMin(name);
+        Location min = plugin.configM.getSchematicConfig().getMin(name);
         if (min == null) return false;
 
-        File folder = new File(PluginCore.plugin.getDataFolder(), "/schematics/");
+        File folder = new File(plugin.getDataFolder(), "/schematics/");
 
         return showPhantomSchematic(player, min, folder, name, autoRemove, save);
     }
@@ -194,15 +193,15 @@ public class WorldEditManager extends Manager {
                                         BukkitAdapter.adapt(clipboard.getFullBlock(BlockVector3.at(x, y, z))).getMaterial().createBlockData());
                                 if (autoRemove) {
                                     SCHEDULED_PHANTOM_BLOCKS.get(chunk).get(player.getUniqueId()).removeIf(single -> single.getKey().equals(name));
-                                    PluginCore.configM.getPhantomSchematics().removeSchematic(chunk.getWorld(), chunk.getX(), chunk.getZ(), player.getUniqueId(), name);
+                                    plugin.configM.getPhantomSchematics().removeSchematic(chunk.getWorld(), chunk.getX(), chunk.getZ(), player.getUniqueId(), name);
                                 }
                             }
                         }
                     }
                 }
-                PluginCore.configM.getPhantomSchematics().save();
+                plugin.configM.getPhantomSchematics().save();
             }
-        }.runTaskAsynchronously(plugin);
+        }.runTaskAsynchronously(worldEditPlugin);
 
         return true;
     }
@@ -218,10 +217,10 @@ public class WorldEditManager extends Manager {
         for (Pair<String, Boolean> pair : new ArrayList<>(SCHEDULED_PHANTOM_BLOCKS.get(chunk).get(uuid))) {
             if ((pair.getKey() + "_r").equalsIgnoreCase(name)) {
                 SCHEDULED_PHANTOM_BLOCKS.get(chunk).get(uuid).remove(pair);
-                PluginCore.configM.getPhantomSchematics().removeSchematic(chunk.getWorld(), chunk.getX(), chunk.getZ(), uuid, name.substring(0, name.length() - 2));
+                plugin.configM.getPhantomSchematics().removeSchematic(chunk.getWorld(), chunk.getX(), chunk.getZ(), uuid, name.substring(0, name.length() - 2));
             }
         }
-        PluginCore.configM.getPhantomSchematics().addSchematic(chunk.getWorld(), chunk.getX(), chunk.getZ(), uuid, name, autoRemove);
+        plugin.configM.getPhantomSchematics().addSchematic(chunk.getWorld(), chunk.getX(), chunk.getZ(), uuid, name, autoRemove);
     }
 
     public void addPhantomBlocksNoConfig(Chunk chunk, UUID uuid, String name, boolean autoRemove) {

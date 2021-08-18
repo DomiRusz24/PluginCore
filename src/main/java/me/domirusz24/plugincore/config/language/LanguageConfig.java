@@ -30,9 +30,9 @@ public class LanguageConfig extends AbstractConfig {
     }
 
     public boolean registerAnnotations() {
-        List<Class<?>> classes = UtilMethods.findClasses();
+        List<Class<?>> classes = getCorePlugin().util.findClasses();
         if (classes == null) {
-            PluginCore.plugin.log(Level.WARNING, "Failed getting all classes!");
+            plugin.log(Level.WARNING, "Failed getting all classes!");
             return false;
         }
 
@@ -68,7 +68,7 @@ public class LanguageConfig extends AbstractConfig {
                                     field.set(null, get(annotation.value()));
                                 }
                             } catch (Exception e) {
-                                PluginCore.plugin.log(Level.WARNING, "Error loading language annotations in " + field.getName() + ", in class " + clazz.getName());
+                                plugin.log(Level.WARNING, "Error loading language annotations in " + field.getName() + ", in class " + clazz.getName());
                                 e.printStackTrace();
                             }
 
@@ -91,7 +91,7 @@ public class LanguageConfig extends AbstractConfig {
                         field.set(null, get(field.getAnnotation(Language.class).value()));
                     }
                 } catch (Exception e) {
-                    PluginCore.plugin.log(Level.WARNING, "Error reloading language annotations in " + field.getName() + ", in class " + clazz.getName());
+                    plugin.log(Level.WARNING, "Error reloading language annotations in " + field.getName() + ", in class " + clazz.getName());
                     e.printStackTrace();
                     success = false;
                 }

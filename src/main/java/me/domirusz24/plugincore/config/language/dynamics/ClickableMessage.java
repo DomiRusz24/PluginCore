@@ -1,5 +1,6 @@
 package me.domirusz24.plugincore.config.language.dynamics;
 
+import me.domirusz24.plugincore.PluginCore;
 import me.domirusz24.plugincore.core.placeholders.PlaceholderObject;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -13,9 +14,9 @@ public class ClickableMessage extends HoverableMessage {
 
     private final DynamicString command;
 
-    protected ClickableMessage(String defaultValue, String path, String hover, String command) {
-        super(defaultValue, path, hover);
-        this.command = DynamicString.of(command, path + ".command");
+    protected ClickableMessage(PluginCore plugin, String defaultValue, String path, String hover, String command) {
+        super(plugin, defaultValue, path, hover);
+        this.command = DynamicString.of(plugin, command, path + ".command");
     }
 
     @Override
@@ -29,11 +30,11 @@ public class ClickableMessage extends HoverableMessage {
         return command;
     }
 
-    public static ClickableMessage of(String defaultValue, String path, String hover, String command) {
+    public static ClickableMessage of(PluginCore plugin, String defaultValue, String path, String hover, String command) {
         if (STRING_BY_PATH.containsKey(path)) {
             return STRING_BY_PATH.get(path);
         }
-        ClickableMessage d = new ClickableMessage(defaultValue, path, hover, command);
+        ClickableMessage d = new ClickableMessage(plugin, defaultValue, path, hover, command);
         STRING_BY_PATH.put(path, d);
         return d;
     }

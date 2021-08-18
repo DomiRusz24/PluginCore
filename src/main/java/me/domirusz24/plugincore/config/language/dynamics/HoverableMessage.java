@@ -1,5 +1,6 @@
 package me.domirusz24.plugincore.config.language.dynamics;
 
+import me.domirusz24.plugincore.PluginCore;
 import me.domirusz24.plugincore.core.placeholders.PlaceholderObject;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -13,9 +14,9 @@ public class HoverableMessage extends DynamicString {
 
     private final DynamicString hover;
 
-    protected HoverableMessage(String defaultValue, String path, String hover) {
-        super(defaultValue, path + ".message");
-        this.hover = DynamicString.of(hover, path + ".hover");
+    protected HoverableMessage(PluginCore plugin, String defaultValue, String path, String hover) {
+        super(plugin, defaultValue, path + ".message");
+        this.hover = DynamicString.of(plugin, hover, path + ".hover");
     }
 
     public TextComponent getText(PlaceholderObject... objects) {
@@ -28,11 +29,11 @@ public class HoverableMessage extends DynamicString {
         return hover;
     }
 
-    public static HoverableMessage of(String defaultValue, String path, String hover) {
+    public static HoverableMessage of(PluginCore plugin, String defaultValue, String path, String hover) {
         if (STRING_BY_PATH.containsKey(path)) {
             return STRING_BY_PATH.get(path);
         }
-        HoverableMessage d = new HoverableMessage(defaultValue, path, hover);
+        HoverableMessage d = new HoverableMessage(plugin, defaultValue, path, hover);
         STRING_BY_PATH.put(path, d);
         return d;
     }

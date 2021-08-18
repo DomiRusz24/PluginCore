@@ -24,8 +24,11 @@ public abstract class PlayerData extends AttributeAble implements PlaceholderPla
 
     private Player player;
 
-    public PlayerData(String name, UUID uuid) {
+    private final PluginCore plugin;
+
+    public PlayerData(PluginCore plugin, String name, UUID uuid) {
         super(PlayerData.class);
+        this.plugin = plugin;
         this.uuid = uuid;
         this.name = name;
         loadAttributes();
@@ -79,7 +82,7 @@ public abstract class PlayerData extends AttributeAble implements PlaceholderPla
             base.unregister();
         }
         player = null;
-        PluginCore.playerDataM.unregister(this);
+        plugin.playerDataM.unregister(this);
     }
 
     public Player getPlayer() {
@@ -92,5 +95,10 @@ public abstract class PlayerData extends AttributeAble implements PlaceholderPla
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public PluginCore getCorePlugin() {
+        return plugin;
     }
 }

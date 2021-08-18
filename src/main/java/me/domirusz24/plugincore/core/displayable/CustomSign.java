@@ -22,20 +22,20 @@ public class CustomSign extends Displayable implements ClickableBlock {
 
     private final String identification;
 
-    public CustomSign(String identification, PlaceholderObject... objects) {
-        super(objects);
+    public CustomSign(PluginCore plugin, String identification, PlaceholderObject... objects) {
+        super(plugin, objects);
         this.identification = identification;
     }
 
-    public CustomSign(String identification) {
-        super();
+    public CustomSign(PluginCore plugin, String identification) {
+        super(plugin);
         this.identification = identification;
     }
 
     public void setSign(Sign sign) {
         if (sign == null) {
-            CoreListener.removeListener((LeftClickable) this);
-            CoreListener.removeListener((RightClickable) this);
+            plugin.listener.removeListener((LeftClickable) this);
+            plugin.listener.removeListener((RightClickable) this);
             if (this.sign != null) {
                 this.sign.getBlock().setType(Material.AIR);
                 this.sign = null;
@@ -44,8 +44,8 @@ public class CustomSign extends Displayable implements ClickableBlock {
             if (this.sign != null) {
                 resetLines();
             }
-            CoreListener.hookInListener((LeftClickable) this);
-            CoreListener.hookInListener((RightClickable) this);
+            plugin.listener.hookInListener((LeftClickable) this);
+            plugin.listener.hookInListener((RightClickable) this);
             this.sign = sign.getLocation();
             update();
         }
@@ -57,7 +57,7 @@ public class CustomSign extends Displayable implements ClickableBlock {
         sign.setLine(1, "");
         sign.setLine(2, "");
         sign.setLine(3, "");
-        Bukkit.getScheduler().runTaskLater(PluginCore.plugin, () -> sign.update(true), 1);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> sign.update(true), 1);
     }
 
     public void removeSign() {
@@ -72,7 +72,7 @@ public class CustomSign extends Displayable implements ClickableBlock {
             for (int i = 0; i < values.size(); i++) {
                 sign.setLine(i, values.get(i));
             }
-            Bukkit.getScheduler().runTaskLater(PluginCore.plugin, () -> sign.update(true), 1);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> sign.update(true), 1);
         }
     }
 
@@ -123,5 +123,10 @@ public class CustomSign extends Displayable implements ClickableBlock {
     public void onRightClick(Player player) {
         rightClick.accept(player);
         update();
+    }
+
+    @Override
+    public PluginCore getCorePlugin() {
+        return plugin;
     }
 }

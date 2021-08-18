@@ -1,5 +1,6 @@
 package me.domirusz24.plugincore.core.players;
 
+import me.domirusz24.plugincore.PluginCore;
 import me.domirusz24.plugincore.core.displayable.CustomScoreboard;
 import me.domirusz24.plugincore.core.placeholders.PlaceholderPlayer;
 import me.domirusz24.plugincore.util.UtilMethods;
@@ -23,14 +24,17 @@ public abstract class AbstractPlayer implements PlaceholderPlayer {
 
     private final ItemStack[] inventory;
 
-    public AbstractPlayer(Player player) {
+    private final PluginCore plugin;
+
+    public AbstractPlayer(PluginCore plugin, Player player) {
+        this.plugin = plugin;
         this.player = player;
         bossBar = bossBar();
         scoreboard = scoreboard();
         if (bossBar != null) bossBar.addPlayer(player);
         if (scoreboard != null) {
             if (!overrideScoreBoard()) {
-                if (!UtilMethods.hasScoreboard(player)) {
+                if (!plugin.util.hasScoreboard(player)) {
                     scoreboard.addPlayer(player);
                 }
             } else {
@@ -44,6 +48,11 @@ public abstract class AbstractPlayer implements PlaceholderPlayer {
             inventory = null;
         }
         PLAYERS.add(this);
+    }
+
+    @Override
+    public PluginCore getCorePlugin() {
+        return plugin;
     }
 
     public void toggleBoard(boolean toggle) {
