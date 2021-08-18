@@ -70,7 +70,7 @@ public class PlayerGlideAction extends GlideAction {
                 current.setPitch(current.getPitch() + pitchTurn);
                 try {
                     player.teleport(current);
-                } catch (Exception ignored) {}
+                } catch (Throwable ignored) {}
             }
         };
     }
