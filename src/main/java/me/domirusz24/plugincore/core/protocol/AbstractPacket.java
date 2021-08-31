@@ -1,13 +1,12 @@
-package me.domirusz24.plugincore.core.protocollib;
-
-import java.lang.reflect.InvocationTargetException;
-
-import org.bukkit.entity.Player;
+package me.domirusz24.plugincore.core.protocol;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.google.common.base.Objects;
+import org.bukkit.entity.Player;
+
+import java.lang.reflect.InvocationTargetException;
 
 public abstract class AbstractPacket {
     // The packet we will be modifying

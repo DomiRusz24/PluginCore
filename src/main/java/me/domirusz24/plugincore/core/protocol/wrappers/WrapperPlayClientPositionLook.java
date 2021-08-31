@@ -1,30 +1,25 @@
-package me.domirusz24.plugincore.core.protocollib.wrappers;
+package me.domirusz24.plugincore.core.protocol.wrappers;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.reflect.StructureModifier;
-import com.comphenix.protocol.utility.MinecraftReflection;
-import com.comphenix.protocol.wrappers.EnumWrappers;
-import me.domirusz24.plugincore.core.protocollib.AbstractPacket;
+import me.domirusz24.plugincore.core.protocol.AbstractPacket;
 
-import java.util.Set;
+public class WrapperPlayClientPositionLook extends AbstractPacket {
+    public static final PacketType TYPE = PacketType.Play.Client.POSITION_LOOK;
 
-public class WrapperPlayServerPosition extends AbstractPacket {
-    public static final PacketType TYPE = PacketType.Play.Server.POSITION;
-
-    public WrapperPlayServerPosition() {
+    public WrapperPlayClientPositionLook() {
         super(new PacketContainer(TYPE), TYPE);
         handle.getModifier().writeDefaults();
     }
 
-    public WrapperPlayServerPosition(PacketContainer packet) {
+    public WrapperPlayClientPositionLook(PacketContainer packet) {
         super(packet, TYPE);
     }
 
     /**
      * Retrieve X.
      * <p>
-     * Notes: absolute/Relative position
+     * Notes: absolute position
      *
      * @return The current X
      */
@@ -42,18 +37,19 @@ public class WrapperPlayServerPosition extends AbstractPacket {
     }
 
     /**
-     * Retrieve Y.
+     * Retrieve Feet Y.
      * <p>
-     * Notes: absolute/Relative position
+     * Notes: absolute feet position. Is normally HeadY - 1.62. Used to modify
+     * the players bounding box when going up stairs, crouching, etc…
      *
-     * @return The current Y
+     * @return The current FeetY
      */
     public double getY() {
         return handle.getDoubles().read(1);
     }
 
     /**
-     * Set Y.
+     * Set Feet Y.
      *
      * @param value - new value.
      */
@@ -64,7 +60,7 @@ public class WrapperPlayServerPosition extends AbstractPacket {
     /**
      * Retrieve Z.
      * <p>
-     * Notes: absolute/Relative position
+     * Notes: absolute position
      *
      * @return The current Z
      */
@@ -84,7 +80,7 @@ public class WrapperPlayServerPosition extends AbstractPacket {
     /**
      * Retrieve Yaw.
      * <p>
-     * Notes: absolute/Relative rotation on the X Axis, in degrees
+     * Notes: absolute rotation on the X Axis, in degrees
      *
      * @return The current Yaw
      */
@@ -104,7 +100,7 @@ public class WrapperPlayServerPosition extends AbstractPacket {
     /**
      * Retrieve Pitch.
      * <p>
-     * Notes: absolute/Relative rotation on the Y Axis, in degrees
+     * Notes: absolute rotation on the Y Axis, in degrees
      *
      * @return The current Pitch
      */
@@ -121,24 +117,24 @@ public class WrapperPlayServerPosition extends AbstractPacket {
         handle.getFloat().write(1, value);
     }
 
-    private static final Class<?> FLAGS_CLASS = MinecraftReflection
-            .getMinecraftClass("EnumPlayerTeleportFlags",
-                    "PacketPlayOutPosition$EnumPlayerTeleportFlags");
-
-    public enum PlayerTeleportFlag {
-        X, Y, Z, Y_ROT, X_ROT
+    /**
+     * Retrieve On Ground.
+     * <p>
+     * Notes: true if the client is on the ground, False otherwise
+     *
+     * @return The current On Ground
+     */
+    public boolean getOnGround() {
+        return handle.getBooleans().read(0);
     }
 
-    private StructureModifier<Set<PlayerTeleportFlag>> getFlagsModifier() {
-        return handle.getSets(
-                EnumWrappers.getGenericConverter(FLAGS_CLASS, PlayerTeleportFlag.class));
+    /**
+     * Set On Ground.
+     *
+     * @param value - new value.
+     */
+    public void setOnGround(boolean value) {
+        handle.getBooleans().write(0, value);
     }
 
-    public Set<PlayerTeleportFlag> getFlags() {
-        return getFlagsModifier().read(0);
-    }
-
-    public void setFlags(Set<PlayerTeleportFlag> value) {
-        getFlagsModifier().write(0, value);
-    }
 }

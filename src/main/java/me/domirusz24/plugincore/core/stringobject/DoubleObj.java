@@ -1,7 +1,5 @@
 package me.domirusz24.plugincore.core.stringobject;
 
-import java.util.function.Supplier;
-
 public class DoubleObj extends StringObject<Double> {
 
     static {

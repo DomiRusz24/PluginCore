@@ -1,7 +1,5 @@
 package me.domirusz24.plugincore.core.stringobject;
 
-import java.util.function.Supplier;
-
 public class StringObj extends StringObject<String> {
 
     static {
@@ -47,7 +45,6 @@ public class StringObj extends StringObject<String> {
                 return string;
             }
         }
-        System.out.println("Sussy balls");
         return null;
     }
 

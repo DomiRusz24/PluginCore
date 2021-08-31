@@ -1,7 +1,6 @@
 package me.domirusz24.plugincore.core.displayable;
 
 
-import me.domirusz24.plugincore.CoreListener;
 import me.domirusz24.plugincore.PluginCore;
 import me.domirusz24.plugincore.core.displayable.interfaces.ClickableItem;
 import me.domirusz24.plugincore.core.displayable.interfaces.LeftClickable;

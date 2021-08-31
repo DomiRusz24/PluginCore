@@ -1,8 +1,8 @@
-package me.domirusz24.plugincore.core.protocollib.wrappers;
+package me.domirusz24.plugincore.core.protocol.wrappers;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
-import me.domirusz24.plugincore.core.protocollib.AbstractPacket;
+import me.domirusz24.plugincore.core.protocol.AbstractPacket;
 
 public class WrapperPlayClientChat extends AbstractPacket {
     public static final PacketType TYPE = PacketType.Play.Client.CHAT;

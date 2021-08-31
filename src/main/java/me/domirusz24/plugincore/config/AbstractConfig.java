@@ -1,15 +1,14 @@
 package me.domirusz24.plugincore.config;
 
 import com.onarandombox.MultiverseCore.MultiverseCore;
-import me.domirusz24.plugincore.config.configvalue.AbstractConfigValue;
 import me.domirusz24.plugincore.PluginCore;
+import me.domirusz24.plugincore.config.configvalue.AbstractConfigValue;
 import me.domirusz24.plugincore.core.PluginInstance;
 import me.domirusz24.plugincore.core.displayable.CustomSign;
 import me.domirusz24.plugincore.core.region.CustomRegion;
 import me.domirusz24.plugincore.managers.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -24,7 +23,7 @@ import java.util.logging.Level;
 
 public abstract class AbstractConfig extends YamlConfiguration implements PluginInstance {
 
-    private File file;
+    private final File file;
 
     private final String name;
 
@@ -59,11 +58,12 @@ public abstract class AbstractConfig extends YamlConfiguration implements Plugin
     }
 
     private void setUp() {
-        if (createFile()) {
-            reload(false);
-            options().copyDefaults(true);
-            manager.registerConfig(this);
+        if (autoGenerate()) {
+            createFile();
         }
+        options().copyDefaults(true);
+        manager.registerConfig(this);
+        reload();
     }
 
     private boolean createFile() {
@@ -87,7 +87,11 @@ public abstract class AbstractConfig extends YamlConfiguration implements Plugin
 
     private boolean reload(boolean publicReload) {
         if (!file.exists()) {
-            if (!createFile()) return false;
+            if (autoGenerate()) {
+                return createFile();
+            } else {
+                return true;
+            }
         }
         try {
             load(file);
@@ -99,6 +103,10 @@ public abstract class AbstractConfig extends YamlConfiguration implements Plugin
         _reload();
         if (publicReload) values.forEach(AbstractConfigValue::autoReload);
         return true;
+    }
+
+    protected boolean autoGenerate() {
+        return false;
     }
 
     public boolean reload() {

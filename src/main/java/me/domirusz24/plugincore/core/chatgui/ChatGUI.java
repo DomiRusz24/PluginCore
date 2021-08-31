@@ -1,10 +1,9 @@
 package me.domirusz24.plugincore.core.chatgui;
 
 import me.domirusz24.plugincore.PluginCore;
-import me.domirusz24.plugincore.command.abstractclasses.BaseCommand;
 import me.domirusz24.plugincore.config.annotations.Language;
 import me.domirusz24.plugincore.core.players.AbstractPlayer;
-import me.domirusz24.plugincore.core.protocollib.wrappers.WrapperPlayServerChat;
+import me.domirusz24.plugincore.core.protocol.wrappers.WrapperPlayServerChat;
 import me.domirusz24.plugincore.util.CompleteListener;
 import me.domirusz24.plugincore.util.UtilMethods;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -134,13 +133,15 @@ public abstract class ChatGUI extends AbstractPlayer implements CompleteListener
     }
 
     public ChatGUI putX() {
-        return addHoverAndClickMessage(LANG_X_CHAR, LANG_X_DESCRIPTION, (p) -> {
-            unregister();
-        });
+        return addHoverAndClickMessage(LANG_X_CHAR, LANG_X_DESCRIPTION, (p) -> onX());
+    }
+
+    public void onX() {
+        unregister();
     }
 
     public void line(String prefix) {
-        addMessage(plugin.util.translateColor(prefix) + LANG_LINE);
+        addMessage(UtilMethods.translateColor(prefix) + LANG_LINE);
     }
 
     public ChatGUI newLine(int lines) {
@@ -158,23 +159,23 @@ public abstract class ChatGUI extends AbstractPlayer implements CompleteListener
     }
 
     public ChatGUI addMessage(String text) {
-        message.add(new TextComponent(text));
+        message.add(new TextComponent(UtilMethods.translateColor(text)));
         return this;
     }
 
     public ChatGUI addHoverMessage(String text, String show) {
-        TextComponent textComponent = new TextComponent(text);
+        TextComponent textComponent = new TextComponent(UtilMethods.translateColor(text));
 
-        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(show)));
+        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(UtilMethods.translateColor(show))));
 
         message.add(textComponent);
         return this;
     }
 
     public ChatGUI addHoverAndClickMessage(String text, String show, Consumer<Player> consumer) {
-        TextComponent textComponent = new TextComponent(text);
+        TextComponent textComponent = new TextComponent(UtilMethods.translateColor(text));
 
-        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(show)));
+        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(UtilMethods.translateColor(show))));
 
         String command = "/ChatGUIEvent" + latestEventIndex;
         latestEventIndex++;
@@ -187,7 +188,7 @@ public abstract class ChatGUI extends AbstractPlayer implements CompleteListener
     }
 
     public ChatGUI addClickableMessage(String text, String click) {
-        TextComponent textComponent = new TextComponent(text);
+        TextComponent textComponent = new TextComponent(UtilMethods.translateColor(text));
 
         textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, click));
 

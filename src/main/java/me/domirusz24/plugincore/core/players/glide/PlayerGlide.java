@@ -3,21 +3,19 @@ package me.domirusz24.plugincore.core.players.glide;
 import me.domirusz24.plugincore.PluginCore;
 import me.domirusz24.plugincore.config.annotations.Language;
 import me.domirusz24.plugincore.core.players.AbstractPlayer;
-import me.domirusz24.plugincore.core.protocollib.ProtocolUtil;
+import me.domirusz24.plugincore.core.protocol.ProtocolUtil;
 import me.domirusz24.plugincore.util.CompleteListener;
 import me.domirusz24.plugincore.util.PerTick;
 import me.domirusz24.plugincore.util.UtilMethods;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.Vector;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class PlayerGlide extends AbstractPlayer implements CompleteListener, PerTick {
 
@@ -119,8 +117,9 @@ public class PlayerGlide extends AbstractPlayer implements CompleteListener, Per
             UtilMethods.removeSpectatorMode(player);
             ProtocolUtil.setGameMode(player, gameMode);
             if (teleportToOrigin) player.teleport(origin);
-            player.setFlying(hadFlight);
+            if (!canFly) player.setFlying(false);
             player.setAllowFlight(canFly);
+            if (canFly) player.setFlying(hadFlight);
             player.setFlySpeed(flySpeed);
             inGlide.remove(player.getName());
             finish.run();

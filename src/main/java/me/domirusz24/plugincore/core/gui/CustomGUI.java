@@ -8,10 +8,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.inventory.*;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.*;
 
@@ -20,12 +22,6 @@ public abstract class CustomGUI implements CompleteListener {
     private boolean active = true;
 
     private final String name;
-
-    public static ItemStack EMPTY;
-
-    public static ItemStack getEmptyItemStack() {
-        return EMPTY.clone();
-    }
 
     private Inventory inventory;
 
@@ -45,6 +41,7 @@ public abstract class CustomGUI implements CompleteListener {
         this.name = name;
         this.size = size;
         this.emptySlot = emptySlot();
+        debug("Start -> " + size);
         registerListener();
     }
 
@@ -54,6 +51,7 @@ public abstract class CustomGUI implements CompleteListener {
         this.emptySlot = emptySlot();
         this.name = name;
         this.size = type.getDefaultSize();
+        debug("Start -> " + size);
         registerListener();
     }
 
@@ -61,6 +59,8 @@ public abstract class CustomGUI implements CompleteListener {
         if (!Bukkit.isPrimaryThread()) {
             throw new IllegalStateException("Must be called sync!");
         }
+        debug("Refresh");
+        debug("Update");
         onUpdate();
 
         for (Integer slot : items.keySet()) {
@@ -74,6 +74,7 @@ public abstract class CustomGUI implements CompleteListener {
         if (!Bukkit.isPrimaryThread()) {
             throw new IllegalStateException("Must be called sync!");
         }
+        debug("Clear");
         items.clear();
         if (emptySlot != null) {
             for (int i = 0; i < inventory.getSize(); i++) {
@@ -96,6 +97,7 @@ public abstract class CustomGUI implements CompleteListener {
             throw new IllegalStateException("Must be called sync!");
         }
         if (size == this.size) return;
+        debug("Change");
         this.size = size;
         Inventory newInventory = Bukkit.createInventory(null, size, name);
         invChange = true;
@@ -110,12 +112,13 @@ public abstract class CustomGUI implements CompleteListener {
     public boolean addPlayer(Player player) {
         return addPlayer(player, true);
     }
-
     public boolean addPlayer(Player player, boolean addToGUIs) {
         if (!Bukkit.isPrimaryThread()) {
             throw new IllegalStateException("Must be called sync!");
         }
+        debug("AddPlayer -> " + player.getName() + " | " + addToGUIs);
         if (!viewers.contains(player.getUniqueId())) {
+            debug("AddPlayer -> " + player.getName() + " OPEN");
             silent.add(player.getUniqueId());
             viewers.add(player.getUniqueId());
             GUIManager.PlayerGUIData guiData = plugin.guiM.get(player);
@@ -135,13 +138,13 @@ public abstract class CustomGUI implements CompleteListener {
                 old.silent.add(player.getUniqueId());
                 player.openInventory(inventory);
                 old.silent.remove(player.getUniqueId());
+                silent.remove(player.getUniqueId());
             }
-            silent.remove(player.getUniqueId());
             return true;
         } else if (silent.contains(player.getUniqueId())) {
-            silent.remove(player.getUniqueId());
-
             player.openInventory(inventory);
+            debug("AddPlayer -> " + player.getName() + " EXISTING");
+            silent.remove(player.getUniqueId());
             return true;
         }
         return false;
@@ -156,12 +159,15 @@ public abstract class CustomGUI implements CompleteListener {
             throw new IllegalStateException("Must be called sync!");
         }
         if (!silent.contains(player.getUniqueId())) {
+            debug("RemovePlayer -> " + player.getName() + " | " + close);
             viewers.remove(player.getUniqueId());
             GUIManager.PlayerGUIData guiData = plugin.guiM.get(player);
             guiData.closeAll();
             if (close) {
                 player.closeInventory();
             }
+        } else {
+            debug("RemovePlayer -> " + player.getName() + " | " + close + " | SILENT");
         }
     }
 
@@ -170,8 +176,10 @@ public abstract class CustomGUI implements CompleteListener {
             throw new IllegalStateException("Must be called sync!");
         }
         if (silent.contains(player.getUniqueId())) {
+            debug("leave -> " + player.getName() + " | SILENT");
             removePlayer(player);
         } else if (viewers.contains(player.getUniqueId())) {
+            debug("leave -> " + player.getName());
             player.closeInventory();
         }
     }
@@ -183,8 +191,11 @@ public abstract class CustomGUI implements CompleteListener {
             throw new IllegalStateException("Must be called sync!");
         }
         if (!silent.contains(player.getUniqueId()) && viewers.contains(player.getUniqueId())) {
+            debug("silentleave -> " + player.getName());
             silent.add(player.getUniqueId());
             player.closeInventory();
+        } else {
+            debug("silentleave -> " + player.getName() + " | FAIL");
         }
     }
 
@@ -192,6 +203,7 @@ public abstract class CustomGUI implements CompleteListener {
         if (!Bukkit.isPrimaryThread()) {
             throw new IllegalStateException("Must be called sync!");
         }
+        debug("onclose -> " + player.getName());
         viewers.remove(player.getUniqueId());
         silent.remove(player.getUniqueId());
         close(player);
@@ -202,16 +214,18 @@ public abstract class CustomGUI implements CompleteListener {
         if (!Bukkit.isPrimaryThread()) {
             throw new IllegalStateException("Must be called sync!");
         }
+        debug("onswitch -> " + player.getName());
         viewers.remove(player.getUniqueId());
         changeGUI(player);
     }
 
     public void registerItem(GUIItem item) {
+        debug("registeritem");
         items.put(item.getSlot(), item);
     }
 
     public ItemStack createItem(Material type, byte data, String name, boolean glow, String... desc) {
-        return plugin.util.createItem(type, data, name, glow, desc);
+        return UtilMethods.createItem(type, data, name, glow, desc);
     }
 
     public void onLeftClick(Player player, int slot) {
@@ -219,7 +233,10 @@ public abstract class CustomGUI implements CompleteListener {
             throw new IllegalStateException("Must be called sync!");
         }
         if (items.containsKey(slot)) {
+            debug("leftclick -> " + player.getName() + " (" + slot + ")");
             items.get(slot).onLeftClick(player);
+        } else {
+            debug("leftclick -> " + player.getName() + " | FAIL (" + slot + ")");
         }
     }
 
@@ -228,7 +245,10 @@ public abstract class CustomGUI implements CompleteListener {
             throw new IllegalStateException("Must be called sync!");
         }
         if (items.containsKey(slot)) {
+            debug("rightclick -> " + player.getName() + " (" + slot + ")");
             items.get(slot).onRightClick(player);
+        } else {
+            debug("rightclick -> " + player.getName() + " | FAIL (" + slot + ")");
         }
     }
 
@@ -251,7 +271,8 @@ public abstract class CustomGUI implements CompleteListener {
         if (!Bukkit.isPrimaryThread()) {
             throw new IllegalStateException("Must be called sync!");
         }
-       unregisterListener();
+        debug("DELETE");
+        unregisterListener();
         for (UUID viewer : viewers) {
             Bukkit.getPlayer(viewer).closeInventory();
         }
@@ -296,16 +317,18 @@ public abstract class CustomGUI implements CompleteListener {
 
     // LISTENERS
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler()
     public void onItemMove(InventoryDragEvent event) {
         if (!getViewers().contains(event.getWhoClicked().getUniqueId())) return;
+        debug("drag -> " + event.getWhoClicked().getName());
         event.setCancelled(true);
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler()
     public void onItemClick(InventoryClickEvent event) {
         if (!getViewers().contains(event.getWhoClicked().getUniqueId())) return;
             event.setCancelled(true);
+            debug("click -> " + event.getWhoClicked().getName());
             Bukkit.getScheduler().runTask(plugin, () -> {
                 if (event.isLeftClick()) onLeftClick((Player) event.getWhoClicked(), event.getSlot());
                 if (event.isRightClick()) onRightClick((Player) event.getWhoClicked(), event.getSlot());
@@ -316,9 +339,18 @@ public abstract class CustomGUI implements CompleteListener {
     public void onInventoryLeave(InventoryCloseEvent event) {
         if (!getViewers().contains(event.getPlayer().getUniqueId())) return;
         if (!invChange && !silent.contains(event.getPlayer().getUniqueId())) {
-            Bukkit.getScheduler().runTask(plugin, () -> {
-                removePlayer((Player) event.getPlayer(), false);
-            });
+            debug("leave -> " + event.getPlayer().getName() + " | 1");
+            removePlayer((Player) event.getPlayer(), false);
+        } else {
+            debug("leave -> " + event.getPlayer().getName() + " | SILENT");
+        }
+    }
+
+    public static final boolean debug = false;
+
+    public void debug(String message) {
+        if (debug) {
+            System.out.println("(" + this.getTitle() + ") " + message);
         }
     }
 

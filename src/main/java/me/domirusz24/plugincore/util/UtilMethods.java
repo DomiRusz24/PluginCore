@@ -4,10 +4,11 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import me.domirusz24.plugincore.PluginCore;
-import com.projectkorra.projectkorra.BendingPlayer;
 import me.domirusz24.plugincore.config.AbstractConfig;
 import me.domirusz24.plugincore.core.PluginInstance;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.boss.BarColor;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -21,13 +22,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
@@ -115,9 +116,10 @@ public class UtilMethods implements PluginInstance {
             input.close();
             output.close();
 
-            System.out.println("File '" + file + "' downloaded successfully!");
+            Bukkit.getLogger().log(Level.INFO, "File '" + file.getName() + "' downloaded successfully!");
         }
         catch(IOException ioEx) {
+            Bukkit.getLogger().log(Level.INFO, "Couldn't download '" + file.getName() + "' downloaded successfully!");
             ioEx.printStackTrace();
         }
     }
@@ -247,13 +249,33 @@ public class UtilMethods implements PluginInstance {
         return meta;
     }
 
+    public static String getProgressBar(double fill, int bars, String prefixFirst, String prefixSecond) {
+        int barsFill = (int) (fill * (double) bars);
+        int space = bars - barsFill;
+        return UtilMethods.translateColor(prefixFirst + StringUtils.repeat("︱", barsFill) + prefixSecond + StringUtils.repeat("︱", space));
+    }
+
+    public static String makeItNice(String s) {
+        StringBuilder b = new StringBuilder(s.toLowerCase().replace("_", " "));
+        b.setCharAt(0, String.valueOf(b.charAt(0)).toUpperCase().charAt(0));
+        return b.toString();
+    }
+
     public static String findColor(String prefix) {
         StringBuilder color = new StringBuilder();
         for (String s : prefix.split("§")) {
-            color.append("§").append(s.charAt(0));
+            if (s.length() > 1) {
+                color.append("§").append(s.charAt(0));
+            }
         }
-        if (prefix.charAt(prefix.length() - 1) == '§') color.append('§');
+        if (prefix.length() > 1) {
+            if (prefix.charAt(prefix.length() - 1) == '§') color.append('§');
+        }
         return color.toString();
+    }
+
+    public static int randomNumber(int min, int max) {
+        return (int) (Math.random() * (max - min)) + min;
     }
 
 
@@ -419,9 +441,64 @@ public class UtilMethods implements PluginInstance {
         return result;
     }
 
+    public static List<Block> getNearbyBlocks(Location location, int radius, Material... materials) {
+        List<Block> list = new ArrayList<>();
+        for(int x = (radius * -1); x <= radius; x++) {
+            for(int y = (radius * -1); y <= radius; y++) {
+                for(int z = (radius * -1); z <= radius; z++) {
+                    Block b = location.getWorld().getBlockAt(location.getBlockX() + x, location.getBlockY() + y, location.getBlockZ() + z);
+                    for (Material material : materials) {
+                        if (b.getType() == material) {
+                            list.add(b);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
+    public static List<Block> getNearbyBlocks(Location location, int radius, Predicate<Material> comparable) {
+        List<Block> list = new ArrayList<>();
+        for(int x = (radius * -1); x <= radius; x++) {
+            for(int y = (radius * -1); y <= radius; y++) {
+                for(int z = (radius * -1); z <= radius; z++) {
+                    Block b = location.getWorld().getBlockAt(location.getBlockX() + x, location.getBlockY() + y, location.getBlockZ() + z);
+                    if (comparable.test(b.getType())) list.add(b);
+                }
+            }
+        }
+        return list;
+    }
+
     public static String[] stringToList(String string) {
         if (string == null) return null;
         return string.split("\\n");
+    }
+
+    public static String listToString(List<String> list) {
+        StringBuilder b = new StringBuilder();
+        for (String s : list) {
+            b.append(s).append("||");
+        }
+        if (b.length() != 0) {
+            b.deleteCharAt(b.length() - 1);
+            b.deleteCharAt(b.length() - 1);
+        }
+        return b.toString();
+    }
+
+    public static String listToString(String... list) {
+        StringBuilder b = new StringBuilder();
+        for (String s : list) {
+            b.append(s).append("||");
+        }
+        if (b.length() != 0) {
+            b.deleteCharAt(b.length() - 1);
+            b.deleteCharAt(b.length() - 1);
+        }
+        return b.toString();
     }
 
     public static String secondsToMinutes(int seconds) {
@@ -576,15 +653,13 @@ public class UtilMethods implements PluginInstance {
 
     public static ItemStack createItem(Material type, byte data, String name, boolean glow, String... desc) {
         ItemStack is = new ItemStack(type, 1);
-        is.setDurability(data);
         ItemMeta meta = is.getItemMeta();
         if (name != null) {
             meta.setDisplayName(name);
         }
         if (desc.length != 0) meta.setLore(Arrays.asList(desc));
-        meta.setUnbreakable(true);
         if (glow) {
-            meta.addEnchant(Enchantment.DURABILITY, 1, false);
+            meta.addEnchant(Enchantment.DURABILITY, 1, true);
         }
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
         is.setItemMeta(meta);

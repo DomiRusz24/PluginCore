@@ -5,11 +5,12 @@ import me.domirusz24.plugincore.config.AbstractConfig;
 import me.domirusz24.plugincore.config.annotations.Language;
 import me.domirusz24.plugincore.managers.ConfigManager;
 import me.domirusz24.plugincore.util.UtilMethods;
-import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 
 public class LanguageConfig extends AbstractConfig {
@@ -18,6 +19,11 @@ public class LanguageConfig extends AbstractConfig {
 
     public LanguageConfig(String path, PluginCore plugin, ConfigManager manager) {
         super(path, plugin, manager);
+    }
+
+    @Override
+    protected boolean autoGenerate() {
+        return true;
     }
 
     @Override

@@ -1,11 +1,7 @@
-package me.domirusz24.plugincore.core.protocollib;
+package me.domirusz24.plugincore.core.protocol;
 
-import com.comphenix.protocol.ProtocolLib;
-import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import me.domirusz24.plugincore.PluginCore;
-import me.domirusz24.plugincore.core.protocollib.wrappers.WrapperPlayServerEntityTeleport;
-import me.domirusz24.plugincore.core.protocollib.wrappers.WrapperPlayerServerGameStateChange;
+import me.domirusz24.plugincore.core.protocol.wrappers.WrapperPlayServerEntityTeleport;
 import me.domirusz24.plugincore.util.UtilMethods;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -14,8 +10,6 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.UUID;
 
 public class ProtocolUtil {
 

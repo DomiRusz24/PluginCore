@@ -2,7 +2,6 @@ package me.domirusz24.plugincore.managers;
 
 import me.domirusz24.plugincore.PluginCore;
 import me.domirusz24.plugincore.core.displayable.CustomScoreboard;
-import me.domirusz24.plugincore.core.gui.CustomGUI;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;

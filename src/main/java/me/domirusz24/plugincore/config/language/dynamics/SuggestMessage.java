@@ -4,7 +4,6 @@ import me.domirusz24.plugincore.PluginCore;
 import me.domirusz24.plugincore.core.placeholders.PlaceholderObject;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 

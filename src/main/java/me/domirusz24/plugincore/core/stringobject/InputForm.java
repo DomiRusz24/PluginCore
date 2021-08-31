@@ -10,7 +10,6 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -57,19 +56,19 @@ public class InputForm extends AbstractPlayer implements CompleteListener {
     }
 
     @Language("InputForm.Start")
-    public static String LANG_START = "&8Utworzono kreator \"&r%name%&r&8\"!||&8Podaj: &l%input%";
+    public static String LANG_START = "&8Started \"&r%name%&r&8\" creator!||&8Podaj: &l%input%";
 
     @Language("InputForm.Input")
-    public static String LANG_INPUT = "&8%previous%&a&l+||&8&aPodaj: &l%input%";
+    public static String LANG_INPUT = "&8%previous%&a&l+||&8&aInput: &l%input%";
 
     @Language("InputForm.InputDefault")
-    public static String LANG_INPUT_DEFAULT = "&8%previous%&a&l+||&8Podaj: &a&l%input%&r&8 (\"DEFAULT_VALUE\" dla podstawowej wartości)";
+    public static String LANG_INPUT_DEFAULT = "&8%previous%&a&l+||&8Input: &a&l%input%&r&8 (\"DEFAULT_VALUE\" for default value)";
 
     @Language("InputForm.Fail")
-    public static String LANG_FAIL = "&8Nie poprawna forma!||&8Podaj: &l%input%";
+    public static String LANG_FAIL = "&8Incorrect form!||&8Input: &l%input%";
 
     @Language("InputForm.Finish")
-    public static String LANG_FINISH = "&8&lUtworzono \"&r%name%&r&8\"!";
+    public static String LANG_FINISH = "&8&lCreated \"&r%name%&r&8\"!";
 
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent event) {

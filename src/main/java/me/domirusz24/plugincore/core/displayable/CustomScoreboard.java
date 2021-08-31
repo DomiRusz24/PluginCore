@@ -85,7 +85,7 @@ public class CustomScoreboard extends PlayerDisplayable {
     }
 
     protected String findColor(String prefix) {
-        return plugin.util.findColor(prefix);
+        return UtilMethods.findColor(prefix);
     }
 
     protected void reset() {
@@ -111,6 +111,10 @@ public class CustomScoreboard extends PlayerDisplayable {
     private String getSpace() {
         SPACE_AMOUNT++;
         return StringUtils.repeat(" ", SPACE_AMOUNT);
+    }
+
+    public Scoreboard getScoreboard() {
+        return scoreboard;
     }
 
     @Override

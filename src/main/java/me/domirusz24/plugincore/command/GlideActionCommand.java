@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionDefault;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class GlideActionCommand extends BaseSubCommand {

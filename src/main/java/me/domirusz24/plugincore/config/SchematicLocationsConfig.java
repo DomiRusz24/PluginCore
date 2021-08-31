@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 public class SchematicLocationsConfig extends AbstractConfig {
 
-    private HashMap<String, Location> SCHEMATIC_MINS;
+    private HashMap<String, Location> SCHEMATIC_MINS = null;
 
     public SchematicLocationsConfig(String path, PluginCore plugin, ConfigManager manager) {
         super(path, plugin, manager);
@@ -59,6 +59,7 @@ public class SchematicLocationsConfig extends AbstractConfig {
     }
 
     public Location getMin(String ID) {
+        if (SCHEMATIC_MINS == null) SCHEMATIC_MINS = new HashMap<>();
         return SCHEMATIC_MINS.getOrDefault(ID, null);
     }
 

@@ -9,4 +9,9 @@ public class PluginConfig extends AbstractConfig {
         super(path, plugin, manager);
         save();
     }
+
+    @Override
+    protected boolean autoGenerate() {
+        return true;
+    }
 }

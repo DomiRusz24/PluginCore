@@ -19,9 +19,7 @@ public class RegionManager extends Manager {
         new BukkitRunnable() {
             @Override
             public void run() {
-                getRegions().forEach((r) -> {
-                    r.updatePlayers();
-                });
+                getRegions().forEach(CustomRegion::updatePlayers);
             }
         }.runTaskTimer(plugin, 10, 2);
     }

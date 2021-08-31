@@ -1,9 +1,9 @@
-package me.domirusz24.plugincore.core.protocollib.wrappers;
+package me.domirusz24.plugincore.core.protocol.wrappers;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.nbt.NbtBase;
-import me.domirusz24.plugincore.core.protocollib.AbstractPacket;
+import me.domirusz24.plugincore.core.protocol.AbstractPacket;
 
 import java.util.List;
 

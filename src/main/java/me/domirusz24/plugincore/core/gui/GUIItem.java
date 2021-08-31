@@ -1,6 +1,5 @@
 package me.domirusz24.plugincore.core.gui;
 
-import me.domirusz24.plugincore.PluginCore;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;

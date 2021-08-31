@@ -1,6 +1,5 @@
 package me.domirusz24.plugincore.command;
 
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import me.domirusz24.plugincore.PluginCore;
 import me.domirusz24.plugincore.command.abstractclasses.BaseSubCommand;
 import me.domirusz24.plugincore.config.annotations.Language;

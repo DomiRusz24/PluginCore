@@ -1,25 +1,30 @@
-package me.domirusz24.plugincore.core.protocollib.wrappers;
+package me.domirusz24.plugincore.core.protocol.wrappers;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
-import me.domirusz24.plugincore.core.protocollib.AbstractPacket;
+import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.utility.MinecraftReflection;
+import com.comphenix.protocol.wrappers.EnumWrappers;
+import me.domirusz24.plugincore.core.protocol.AbstractPacket;
 
-public class WrapperPlayClientPositionLook extends AbstractPacket {
-    public static final PacketType TYPE = PacketType.Play.Client.POSITION_LOOK;
+import java.util.Set;
 
-    public WrapperPlayClientPositionLook() {
+public class WrapperPlayServerPosition extends AbstractPacket {
+    public static final PacketType TYPE = PacketType.Play.Server.POSITION;
+
+    public WrapperPlayServerPosition() {
         super(new PacketContainer(TYPE), TYPE);
         handle.getModifier().writeDefaults();
     }
 
-    public WrapperPlayClientPositionLook(PacketContainer packet) {
+    public WrapperPlayServerPosition(PacketContainer packet) {
         super(packet, TYPE);
     }
 
     /**
      * Retrieve X.
      * <p>
-     * Notes: absolute position
+     * Notes: absolute/Relative position
      *
      * @return The current X
      */
@@ -37,19 +42,18 @@ public class WrapperPlayClientPositionLook extends AbstractPacket {
     }
 
     /**
-     * Retrieve Feet Y.
+     * Retrieve Y.
      * <p>
-     * Notes: absolute feet position. Is normally HeadY - 1.62. Used to modify
-     * the players bounding box when going up stairs, crouching, etc…
+     * Notes: absolute/Relative position
      *
-     * @return The current FeetY
+     * @return The current Y
      */
     public double getY() {
         return handle.getDoubles().read(1);
     }
 
     /**
-     * Set Feet Y.
+     * Set Y.
      *
      * @param value - new value.
      */
@@ -60,7 +64,7 @@ public class WrapperPlayClientPositionLook extends AbstractPacket {
     /**
      * Retrieve Z.
      * <p>
-     * Notes: absolute position
+     * Notes: absolute/Relative position
      *
      * @return The current Z
      */
@@ -80,7 +84,7 @@ public class WrapperPlayClientPositionLook extends AbstractPacket {
     /**
      * Retrieve Yaw.
      * <p>
-     * Notes: absolute rotation on the X Axis, in degrees
+     * Notes: absolute/Relative rotation on the X Axis, in degrees
      *
      * @return The current Yaw
      */
@@ -100,7 +104,7 @@ public class WrapperPlayClientPositionLook extends AbstractPacket {
     /**
      * Retrieve Pitch.
      * <p>
-     * Notes: absolute rotation on the Y Axis, in degrees
+     * Notes: absolute/Relative rotation on the Y Axis, in degrees
      *
      * @return The current Pitch
      */
@@ -117,24 +121,24 @@ public class WrapperPlayClientPositionLook extends AbstractPacket {
         handle.getFloat().write(1, value);
     }
 
-    /**
-     * Retrieve On Ground.
-     * <p>
-     * Notes: true if the client is on the ground, False otherwise
-     *
-     * @return The current On Ground
-     */
-    public boolean getOnGround() {
-        return handle.getBooleans().read(0);
+    private static final Class<?> FLAGS_CLASS = MinecraftReflection
+            .getMinecraftClass("EnumPlayerTeleportFlags",
+                    "PacketPlayOutPosition$EnumPlayerTeleportFlags");
+
+    public enum PlayerTeleportFlag {
+        X, Y, Z, Y_ROT, X_ROT
     }
 
-    /**
-     * Set On Ground.
-     *
-     * @param value - new value.
-     */
-    public void setOnGround(boolean value) {
-        handle.getBooleans().write(0, value);
+    private StructureModifier<Set<PlayerTeleportFlag>> getFlagsModifier() {
+        return handle.getSets(
+                EnumWrappers.getGenericConverter(FLAGS_CLASS, PlayerTeleportFlag.class));
     }
 
+    public Set<PlayerTeleportFlag> getFlags() {
+        return getFlagsModifier().read(0);
+    }
+
+    public void setFlags(Set<PlayerTeleportFlag> value) {
+        getFlagsModifier().write(0, value);
+    }
 }

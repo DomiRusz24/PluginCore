@@ -3,15 +3,14 @@ package me.domirusz24.plugincore;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.onarandombox.MultiverseCore.MultiverseCore;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import me.domirusz24.plugincore.core.players.PlayerData;
 import me.domirusz24.plugincore.managers.*;
 import me.domirusz24.plugincore.managers.database.DataBaseManager;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import me.domirusz24.plugincore.managers.database.DataBaseTable;
 import me.domirusz24.plugincore.util.UtilMethods;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -53,8 +52,8 @@ softdepend: [Multiverse-Core]
     public void onEnable() {
         initialize();
         loadDependencies();
-        loadManagers();
         registerEvents();
+        loadManagers();
     }
 
     @Override

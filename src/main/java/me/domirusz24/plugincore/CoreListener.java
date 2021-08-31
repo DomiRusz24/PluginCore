@@ -6,17 +6,16 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.events.PacketListener;
 import com.comphenix.protocol.wrappers.EnumWrappers;
-import com.comphenix.protocol.wrappers.WrappedBlockData;
-import com.projectkorra.projectkorra.ability.CoreAbility;
 import me.domirusz24.plugincore.core.PluginInstance;
 import me.domirusz24.plugincore.core.chatgui.ChatGUI;
+import me.domirusz24.plugincore.core.displayable.CustomScoreboard;
 import me.domirusz24.plugincore.core.displayable.interfaces.LeftClickable;
 import me.domirusz24.plugincore.core.displayable.interfaces.RightClickable;
 import me.domirusz24.plugincore.core.players.AbstractPlayer;
 import me.domirusz24.plugincore.core.players.PlayerData;
 import me.domirusz24.plugincore.core.players.glide.PlayerGlide;
-import me.domirusz24.plugincore.core.protocollib.ProtocolUtil;
-import me.domirusz24.plugincore.core.protocollib.wrappers.*;
+import me.domirusz24.plugincore.core.protocol.ProtocolUtil;
+import me.domirusz24.plugincore.core.protocol.wrappers.*;
 import me.domirusz24.plugincore.util.Pair;
 import me.domirusz24.plugincore.util.PerTick;
 import me.domirusz24.plugincore.util.UtilMethods;
@@ -25,7 +24,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -87,12 +85,14 @@ public class CoreListener implements Listener, PluginInstance {
                 }
 
                 if (packetEvent.getPacketType().equals(PacketType.Play.Server.POSITION)) {
-                    if (ProtocolUtil.TELEPORT_LOCATION.containsKey(packetEvent.getPlayer().getEntityId())) {
-                        Location loc = ProtocolUtil.TELEPORT_LOCATION.get(packetEvent.getPlayer().getEntityId());
-                        if (packetEvent.getPacketType() == PacketType.Play.Server.POSITION) {
-                            packetEvent.setCancelled(true);
+                    try {
+                        if (ProtocolUtil.TELEPORT_LOCATION.containsKey(packetEvent.getPlayer().getEntityId())) {
+                            Location loc = ProtocolUtil.TELEPORT_LOCATION.get(packetEvent.getPlayer().getEntityId());
+                            if (packetEvent.getPacketType() == PacketType.Play.Server.POSITION) {
+                                packetEvent.setCancelled(true);
+                            }
                         }
-                    }
+                    } catch (Throwable ignored){}
                 } else if (packetEvent.getPacketType().equals(PacketType.Play.Server.MAP_CHUNK)) {
                     WrapperPlayServerMapChunk map = new WrapperPlayServerMapChunk(packetEvent.getPacket());
                     int x = map.getChunkX() * 16;
@@ -142,7 +142,7 @@ public class CoreListener implements Listener, PluginInstance {
             @Override
             public void onPacketReceiving(PacketEvent packetEvent) {
                 if (packetEvent.getPacketType().equals(PacketType.Play.Client.SPECTATE)) {
-                    if (plugin.util.IN_SPECTATOR.contains(packetEvent.getPlayer().getName())) {
+                    if (UtilMethods.IN_SPECTATOR.contains(packetEvent.getPlayer().getName())) {
                         packetEvent.setCancelled(true);
                     }
                 } else if (packetEvent.getPacketType() == PacketType.Play.Client.POSITION || packetEvent.getPacketType() == PacketType.Play.Client.POSITION_LOOK) {
@@ -163,26 +163,30 @@ public class CoreListener implements Listener, PluginInstance {
                         }
                     }
                 } else if (packetEvent.getPacketType() == PacketType.Play.Client.CHAT) {
-                    if (PlayerGlide.inGlide.contains(packetEvent.getPlayer().getName())) {
-                        packetEvent.setCancelled(true);
-                        return;
-                    }
-                    ChatGUI panel = plugin.chatGuiM.getChatGUI(packetEvent.getPlayer());
-                    if (panel != null) {
-                        WrapperPlayClientChat chat = new WrapperPlayClientChat(packetEvent.getPacket());
-                        Bukkit.getScheduler().runTask(plugin, () -> {
-                            panel.onCommand(chat.getMessage());
-                        });
-                        packetEvent.setCancelled(true);
-                    }
-                } else if (packetEvent.getPacketType() == PacketType.Play.Client.USE_ENTITY) {
-                    WrapperPlayClientUseEntity wrapper = new WrapperPlayClientUseEntity(packetEvent.getPacket());
-                    if (wrapper.getType().equals(EnumWrappers.EntityUseAction.INTERACT_AT)) {
-                        Location blockLocation = new Location(packetEvent.getPlayer().getWorld(), wrapper.getTargetVector().getX(), wrapper.getTargetVector().getY(), wrapper.getTargetVector().getZ());
-                        if (plugin.worldEditM.isAvailable(blockLocation.getChunk(), packetEvent.getPlayer())) {
+                    try {
+                        if (PlayerGlide.inGlide.contains(packetEvent.getPlayer().getName())) {
+                            packetEvent.setCancelled(true);
+                            return;
+                        }
+                        ChatGUI panel = plugin.chatGuiM.getChatGUI(packetEvent.getPlayer());
+                        if (panel != null) {
+                            WrapperPlayClientChat chat = new WrapperPlayClientChat(packetEvent.getPacket());
+                            Bukkit.getScheduler().runTask(plugin, () -> {
+                                panel.onCommand(chat.getMessage());
+                            });
                             packetEvent.setCancelled(true);
                         }
-                    }
+                    } catch (Throwable ignored){}
+                } else if (packetEvent.getPacketType() == PacketType.Play.Client.USE_ENTITY) {
+                    try {
+                        WrapperPlayClientUseEntity wrapper = new WrapperPlayClientUseEntity(packetEvent.getPacket());
+                        if (wrapper.getType().equals(EnumWrappers.EntityUseAction.INTERACT_AT)) {
+                            Location blockLocation = new Location(packetEvent.getPlayer().getWorld(), wrapper.getTargetVector().getX(), wrapper.getTargetVector().getY(), wrapper.getTargetVector().getZ());
+                            if (plugin.worldEditM.isAvailable(blockLocation.getChunk(), packetEvent.getPlayer())) {
+                                packetEvent.setCancelled(true);
+                            }
+                        }
+                    } catch (Throwable ignored){}
                 } else if (packetEvent.getPacketType() == PacketType.Play.Client.BLOCK_DIG) {
                     WrapperPlayClientBlockDig wrapper = new WrapperPlayClientBlockDig(packetEvent.getPacket());
                     if (wrapper.getStatus().equals(EnumWrappers.PlayerDigType.STOP_DESTROY_BLOCK)) {
@@ -243,11 +247,14 @@ public class CoreListener implements Listener, PluginInstance {
         if (p != null) {
             p.onLeave();
         }
+        plugin.guiM.unregister(event.getPlayer());
+        CustomScoreboard cs = plugin.boardM.get(event.getPlayer());
+        if (cs != null) cs.removePlayer(event.getPlayer());
     }
 
     @EventHandler
     public void onTeleport(PlayerTeleportEvent event) {
-        if (plugin.util.IN_SPECTATOR.contains(event.getPlayer().getName())) {
+        if (UtilMethods.IN_SPECTATOR.contains(event.getPlayer().getName())) {
             if (event.getCause() != PlayerTeleportEvent.TeleportCause.PLUGIN) {
                 event.setCancelled(true);
             }

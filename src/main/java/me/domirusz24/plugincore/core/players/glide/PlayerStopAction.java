@@ -2,8 +2,6 @@ package me.domirusz24.plugincore.core.players.glide;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 public class PlayerStopAction extends GlideAction {
 

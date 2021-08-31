@@ -23,10 +23,10 @@ public class PlayerGlideTimeAction extends GlideAction {
         to.setDirection(to.getDirection().normalize());
         super.setFrom(from);
         double distance = from.distance(to);
-        double speed = (double) (distance / (double) ticks);
+        double speed = distance / (double) ticks;
         this.direction = to.toVector().subtract(from.toVector()).normalize().multiply(speed);
-        pitchTurn = (float) (Math.abs(from.getPitch() - to.getPitch()) * (float) getBestTurn(from.getPitch() + 180, to.getPitch() + 180)) / (float) ticks;
-        yawTurn = (float) (Math.abs(from.getYaw() - to.getYaw()) * (float) getBestTurn((from.getYaw() % 180) + 180, (to.getYaw() % 180) + 180)) / (float) ticks;
+        pitchTurn = (Math.abs(from.getPitch() - to.getPitch()) * (float) getBestTurn(from.getPitch() + 180, to.getPitch() + 180)) / (float) ticks;
+        yawTurn = (Math.abs(from.getYaw() - to.getYaw()) * (float) getBestTurn((from.getYaw() % 180) + 180, (to.getYaw() % 180) + 180)) / (float) ticks;
     }
 
     private static int getBestTurn(float start, float finish) {

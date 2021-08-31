@@ -39,7 +39,7 @@ public abstract class PlayerDisplayable extends Displayable {
     }
 
     public List<Player> getPlayers() {
-        return players;
+        return new ArrayList<>(players);
     }
 
     protected abstract boolean onPlayerAdd(Player player);

@@ -2,7 +2,6 @@ package me.domirusz24.plugincore.core.team;
 
 import me.domirusz24.plugincore.PluginCore;
 import me.domirusz24.plugincore.core.placeholders.PlaceholderObject;
-import me.domirusz24.plugincore.core.players.AbstractPlayer;
 import me.domirusz24.plugincore.managers.PAPIManager;
 
 import java.util.ArrayList;

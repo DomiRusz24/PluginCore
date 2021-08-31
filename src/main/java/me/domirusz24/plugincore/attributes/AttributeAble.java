@@ -1,7 +1,6 @@
 package me.domirusz24.plugincore.attributes;
 
 import java.lang.reflect.Constructor;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public abstract class AttributeAble {

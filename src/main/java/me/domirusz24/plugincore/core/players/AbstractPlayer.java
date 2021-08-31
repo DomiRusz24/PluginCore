@@ -34,7 +34,7 @@ public abstract class AbstractPlayer implements PlaceholderPlayer {
         if (bossBar != null) bossBar.addPlayer(player);
         if (scoreboard != null) {
             if (!overrideScoreBoard()) {
-                if (!plugin.util.hasScoreboard(player)) {
+                if (!UtilMethods.hasScoreboard(player)) {
                     scoreboard.addPlayer(player);
                 }
             } else {

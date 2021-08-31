@@ -1,6 +1,5 @@
 package me.domirusz24.plugincore.command.abstractclasses;
 
-import me.domirusz24.plugincore.PluginCore;
 import me.domirusz24.plugincore.core.PluginInstance;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -50,8 +49,7 @@ public abstract class Command implements PluginInstance {
     public abstract PermissionDefault getPermissionDefault();
 
     public String getPermission() {
-        String permission = getCorePlugin().getName().toLowerCase() + ".command." + this.name().toLowerCase();
-        return permission;
+        return getCorePlugin().getName().toLowerCase() + ".command." + this.name().toLowerCase();
     }
 
     public boolean hasPermission(CommandSender sender) {

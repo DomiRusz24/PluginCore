@@ -5,7 +5,7 @@ import com.comphenix.protocol.events.ListeningWhitelist;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.events.PacketListener;
 import me.domirusz24.plugincore.PluginCore;
-import me.domirusz24.plugincore.core.protocollib.wrappers.WrapperPlayServerPosition;
+import me.domirusz24.plugincore.core.protocol.wrappers.WrapperPlayServerPosition;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -86,17 +86,21 @@ public class ProtocolManager extends Manager {
     }
 
     public void packetTeleport(Player player, Location location) {
-        WrapperPlayServerPosition packet = new WrapperPlayServerPosition();
-        packet.setX(location.getX());
-        packet.setY(location.getY());
-        packet.setZ(location.getZ());
-        packet.setPitch(location.getPitch());
-        packet.setYaw(location.getYaw());
         try {
-            protocolLib.sendServerPacket(player, packet.getHandle());
-        } catch (Exception e) {
-            e.printStackTrace();
-            plugin.log(Level.WARNING, "Failed packet teleporting player " + player.getName());
+            WrapperPlayServerPosition packet = new WrapperPlayServerPosition();
+            packet.setX(location.getX());
+            packet.setY(location.getY());
+            packet.setZ(location.getZ());
+            packet.setPitch(location.getPitch());
+            packet.setYaw(location.getYaw());
+            try {
+                protocolLib.sendServerPacket(player, packet.getHandle());
+            } catch (Exception e) {
+                e.printStackTrace();
+                plugin.log(Level.WARNING, "Failed packet teleporting player " + player.getName());
+            }
+        }  catch (Throwable e) {
+            player.teleport(location);
         }
     }
 

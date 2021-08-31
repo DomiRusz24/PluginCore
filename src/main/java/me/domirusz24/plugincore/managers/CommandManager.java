@@ -53,6 +53,10 @@ public class CommandManager extends Manager implements TabExecutor {
         PERMISSIONS_LIST.add(parentPermission);
     }
 
+    public void addPermission(String permission, PermissionDefault permissionDefault) {
+        PERMISSIONS_LIST.add(new Permission(permission, permissionDefault));
+    }
+
     public void registerCommand(AbstractCommand<? extends AbstractSubCommand> command) {
         COMMANDS.add(command);
         PluginCommand com = null;

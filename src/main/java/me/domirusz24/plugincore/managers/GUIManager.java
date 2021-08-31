@@ -11,7 +11,7 @@ import java.util.UUID;
 
 public class GUIManager extends Manager {
 
-    private HashMap<UUID, PlayerGUIData> DATA_BY_UUID = new HashMap<>();;
+    private HashMap<UUID, PlayerGUIData> DATA_BY_UUID = new HashMap<>();
 
     public GUIManager(PluginCore plugin) {
         super(plugin);
@@ -52,8 +52,10 @@ public class GUIManager extends Manager {
 
         public void addNew(CustomGUI customGUI) {
             current++;
+            debug("adding " + customGUI.getTitle() + " -> " + current);
             for (Integer id : new ArrayList<>(GUI.keySet())) {
                 if (id >= current) {
+                    debug("removing " + GUI.get(id).getTitle() + " -> " + id);
                     GUI.remove(id);
                 }
             }
@@ -63,8 +65,10 @@ public class GUIManager extends Manager {
         public CustomGUI previous() {
             current--;
             if (current >= 0) {
+                debug("previous -> " + getCurrent().getTitle());
                 return getCurrent();
             } else {
+                debug("previous FAIL");
                 current++;
                 return null;
             }
@@ -73,8 +77,10 @@ public class GUIManager extends Manager {
         public CustomGUI next() {
             current++;
             if (current < GUI.size()) {
+                debug("next -> " + getCurrent().getTitle());
                 return getCurrent();
             } else {
+                debug("next FAIL");
                 current--;
                 return null;
             }
@@ -111,10 +117,12 @@ public class GUIManager extends Manager {
         }
 
         public void closeAll() {
+            debug("CLOSE ALL");
             for (Integer id : new HashSet<>(GUI.keySet())) {
                 GUI.get(id).onPlayerClose(player);
             }
             GUI.clear();
+            current = -1;
         }
 
         public CustomGUI getCurrent() {
@@ -127,5 +135,13 @@ public class GUIManager extends Manager {
         public Player getPlayer() {
             return player;
         }
+
+        public void debug(String message) {
+            if (CustomGUI.debug) {
+                System.out.println("(" + this.getPlayer().getName() + ") " + message);
+            }
+        }
+
+
     }
 }

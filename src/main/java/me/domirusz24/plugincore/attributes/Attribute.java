@@ -1,7 +1,5 @@
 package me.domirusz24.plugincore.attributes;
 
-import java.lang.reflect.Constructor;
-
 public class Attribute<T extends AttributeBase<? extends AttributeAble>> {
 
     private final String name;

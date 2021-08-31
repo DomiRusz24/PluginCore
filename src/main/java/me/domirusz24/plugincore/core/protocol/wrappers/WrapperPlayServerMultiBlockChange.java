@@ -1,9 +1,10 @@
-package me.domirusz24.plugincore.core.protocollib.wrappers;
+package me.domirusz24.plugincore.core.protocol.wrappers;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.*;
-import me.domirusz24.plugincore.core.protocollib.AbstractPacket;
+import com.comphenix.protocol.wrappers.BlockPosition;
+import com.comphenix.protocol.wrappers.WrappedBlockData;
+import me.domirusz24.plugincore.core.protocol.AbstractPacket;
 
 public class WrapperPlayServerMultiBlockChange extends AbstractPacket {
     public static final PacketType TYPE =

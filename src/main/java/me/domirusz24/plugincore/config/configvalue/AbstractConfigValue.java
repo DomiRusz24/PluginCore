@@ -3,7 +3,6 @@ package me.domirusz24.plugincore.config.configvalue;
 
 
 import me.domirusz24.plugincore.config.AbstractConfig;
-import org.bukkit.Location;
 
 public abstract class AbstractConfigValue<T> {
 
@@ -34,7 +33,7 @@ public abstract class AbstractConfigValue<T> {
         this.path = path;
         this.defaultValue = defaultValue;
         if (defaultValue != null) {
-            config.addDefault(getPath(), defaultValue);
+            _setDefaultValue(defaultValue);
         }
         value = getConfigValue();
         this.autoReload = autoReload;
@@ -60,7 +59,7 @@ public abstract class AbstractConfigValue<T> {
 
     public void saveDefault() {
         if (defaultValue != null) {
-            config.addDefault(getPath(), defaultValue);
+            _setDefaultValue(defaultValue);
         }
     }
 

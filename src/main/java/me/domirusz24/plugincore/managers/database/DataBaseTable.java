@@ -1,14 +1,14 @@
 package me.domirusz24.plugincore.managers.database;
 
-import me.domirusz24.plugincore.PluginCore;
 import me.domirusz24.plugincore.managers.database.values.DataBaseValue;
-import javafx.util.Pair;
 import org.bukkit.Bukkit;
 
-import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class DataBaseTable {
@@ -295,7 +295,7 @@ public abstract class DataBaseTable {
         for (String s : list) {
             sb.append(s).append(';');
         }
-        sb.deleteCharAt(sb.length() - 1);
+        if (sb.length() > 1) sb.deleteCharAt(sb.length() - 1);
         return sb.toString();
     }
 
@@ -304,7 +304,7 @@ public abstract class DataBaseTable {
         for (String s : list) {
             sb.append(s).append(';');
         }
-        sb.deleteCharAt(sb.length() - 1);
+        if (sb.length() > 1) sb.deleteCharAt(sb.length() - 1);
         return sb.toString();
     }
 

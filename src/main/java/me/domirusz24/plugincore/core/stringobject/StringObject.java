@@ -1,12 +1,9 @@
 package me.domirusz24.plugincore.core.stringobject;
 
-import me.domirusz24.plugincore.core.players.glide.GlideAction;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.Supplier;
 
 public abstract class StringObject<T> {
 

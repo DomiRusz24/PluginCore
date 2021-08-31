@@ -1,7 +1,6 @@
 package me.domirusz24.plugincore.core.placeholders;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import me.domirusz24.plugincore.PluginCore;
 import org.bukkit.entity.Player;
 
 public interface PlaceholderPlayer extends PlaceholderObject {

@@ -1,7 +1,6 @@
 package me.domirusz24.plugincore.core.players;
 
 import me.domirusz24.plugincore.PluginCore;
-import me.domirusz24.plugincore.attributes.Attribute;
 import me.domirusz24.plugincore.attributes.AttributeAble;
 import me.domirusz24.plugincore.attributes.AttributeBase;
 import me.domirusz24.plugincore.attributes.PlayerAttribute;
@@ -11,7 +10,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
